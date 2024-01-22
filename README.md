@@ -17,7 +17,7 @@ git checkout feature/Nombre_equipo
 ```
 Verificar siempre que se está trabajando en la rama adecuada:
 
-![Ejemplo Rama ](./rama_ejem.png)
+![Ejemplo Rama ](https://github.com/AdMu2838/Proyecto-Arquitectura-de-computadora/blob/main/rama_ejm.png)
 
 
 ### 3. Crear entorno virtual
