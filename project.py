@@ -12,6 +12,8 @@ import pyttsx3
 import speech_recognition as sr
 
 from camera_senias import Camera
+from aprendizaje import Aprendizaje
+from test import Test
 
 # Inicializa la instancia de pyttsx3 fuera de la función
 motor_voz = pyttsx3.init()
@@ -79,6 +81,8 @@ if __name__ == "__main__":
     microphone = sr.Microphone()
     salir = False
 
+    mi_aprendizaje = Aprendizaje()
+    mi_test = Test()
     mi_camara = Camera()
 
     #PRIMERA PARTE (SALUDO Y NOMBRE)
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     print(text)
     texto_a_audio(text)
     time.sleep(0.5)
-    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos? ¿Juego de señas?")
+    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
     print("dime")
     texto_a_audio("dime")
 
@@ -146,10 +150,10 @@ if __name__ == "__main__":
             texto_a_audio(text)
 
             if respuesta == "aprendizaje":
-                print("hola mundo")
+                mi_aprendizaje.ejecutar()
 
             elif respuesta == "test":
-                print("hola mundo")
+                mi_test.ejecutar()
             
             elif respuesta == "juego":
                 print("\n INICIALIZANDING...")
