@@ -102,9 +102,9 @@ if __name__ == "__main__":
     #TERCERA PARTE (OPCIONES)
     print("\nOPCIONES:")
 
-    #text = f"{nombre} ahora voy a explicarte sobre las opciones que tiene este programa. Tienes 3 opciones para escoger."
-    #print(text)
-    #texto_a_audio(text)
+    text = f"{nombre} ahora voy a explicarte sobre las opciones que tiene este programa. Tienes 3 opciones para escoger."
+    print(text)
+    texto_a_audio(text)
 
     text = (
     "\n 1) Aprendizaje"
@@ -115,20 +115,20 @@ if __name__ == "__main__":
     print(text)
     texto_a_audio(text)
 
-    """text = (
+    text = (
         "\n La opción Aprendizaje es donde podrás aprender todo con respecto a la Estructura de un computador."
         "\n La opción Tests es donde podrás poner en práctica lo que aprendiste mediante exámenes."
         "\n Y por último, la tercer opción, es Juego, donde tambien podrás demostrar lo que aprendiste jugando."
-    )"""
-    #print(text)
-    #texto_a_audio(text)
+    )
+    print(text)
+    texto_a_audio(text)
 
     text = "¿Qué opción eliges?"
     print(text)
     texto_a_audio(text)
     time.sleep(0.5)
-    """texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos? ¿Juego de señas?")
-    print("dime")"""
+    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos? ¿Juego de señas?")
+    print("dime")
     texto_a_audio("dime")
 
     
