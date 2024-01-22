@@ -1,85 +1,25 @@
-import speech_recognition as sr
-import pyttsx3
-import time
-import sys
-import tkinter as tk
-import random
-import json
-from tkinter import messagebox
-from PIL import Image, ImageTk
 
-import pyttsx3
-import speech_recognition as sr
-
+from asistente import AsistenteVoz
 from camera_senias import Camera
 from aprendizaje import Aprendizaje
 from test import Test
 
-# Inicializa la instancia de pyttsx3 fuera de la función
-motor_voz = pyttsx3.init()
 
-# Convierte cadenas de texto a audio y reproduce
+# Inicializa la instancia de AsistenteVoz
+asistente_voz = AsistenteVoz()
+
 def texto_a_audio(comando):
-    global motor_voz
-    motor_voz.say(comando)
-    motor_voz.runAndWait()
+    asistente_voz.texto_a_audio(comando)
 
-# Captura audio desde el micrófono y analiza posibles errores
-def capturar_voz(reconocer, microfono, tiempo_ruido=1.0):
-    if not isinstance(reconocer, sr.Recognizer):
-        raise TypeError("'reconocer' no es una instancia de 'Recognizer'")
+def capturar_voz():
+    return asistente_voz.capturar_voz()
 
-    if not isinstance(microfono, sr.Microphone):
-        raise TypeError("'microfono' no es una instancia de 'Microphone'")
-
-    with microfono as fuente:
-        reconocer.adjust_for_ambient_noise(fuente, duration=tiempo_ruido)
-        audio = reconocer.listen(fuente)
-
-    respuesta = {"suceso": True, "error": None, "mensaje": None}
-    try:
-        respuesta["mensaje"] = reconocer.recognize_google(audio, language="es-PE")
-    except sr.RequestError:
-        respuesta["suceso"] = False
-        respuesta["error"] = "API no disponible"
-    except sr.UnknownValueError:
-        respuesta["error"] = "Habla ininteligible"
-    return respuesta
-
-# Convierte a una cadena de texto en minúscula el audio enviado por el micrófono
 def enviar_voz():
-    recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
-
-    while True:
-        palabra = capturar_voz(recognizer, microphone)
-        
-        if palabra["suceso"] and palabra["mensaje"]:
-            return palabra["mensaje"].lower()
-
-        if not palabra["suceso"]:
-            print(f"\nAlgo no está bien. No puedo reconocer tu micrófono o no lo tienes enchufado. <{palabra['error']}>")
-            texto_a_audio("Algo no está bien. No puedo reconocer tu micrófono o no lo tienes enchufado.")
-            exit(1)
-
-        print("\nNo pude escucharte, ¿podrías repetirlo?")
-        texto_a_audio("No pude escucharte, ¿podrías repetirlo?")
-
-
-#BASE DE DATOS DONDE SE ENCUENTRA TODA LA INFORMACION CONCERNIENTE
-
-#with open('basedatos.json', 'r') as archivo:       aun no lo usamos
-#    datos = json.load(archivo)
-
-#Acceder a la parte especifica que se desea imprimir
+    return asistente_voz.enviar_voz()
 
 
 #INICIO
 if __name__ == "__main__":
-
-    recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
-    salir = False
 
     mi_aprendizaje = Aprendizaje()
     mi_test = Test()
@@ -114,7 +54,6 @@ if __name__ == "__main__":
     "\n 1) Aprendizaje"
     "\n 2) Test"
     "\n 3) Juego"
-    "\n 4) Juego de señas"
     )
     print(text)
     texto_a_audio(text)
@@ -134,7 +73,6 @@ if __name__ == "__main__":
     texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
     print("dime")
     texto_a_audio("dime")
-
     
     
     while True:
@@ -142,8 +80,6 @@ if __name__ == "__main__":
         print("Tu respuesta " + respuesta)
 
         text = f"\nElegiste la opción de {respuesta}"
-
-        
 
         if respuesta in ["aprendizaje", "test", "juego"]:
             print(text)
@@ -158,9 +94,8 @@ if __name__ == "__main__":
             elif respuesta == "juego":
                 print("\n INICIALIZANDING...")
                 mi_camara.ejecutar()
-
             break
-        
+  
         else:
             text = (
                 f"{nombre} creo que no has respondido con alguna de las instrucciones indicadas anteriormente."
