@@ -3,8 +3,20 @@
 Para su instalación siga los siguientes pasos:
 
 ### 1. Clonar repositorio
+
 ```shell
 git clone https://github.com/AdMu2838/Proyecto-Arquitectura-de-computadora.git
+```
+
+### 3. Seleccionar mi rama
+
+Las ramas de trabajo disponibles son:
+feature/Aprendizaje
+feature/Test
+feature/Juego
+
+```shell
+git checkout feature/Nombre_equipo
 ```
 
 ### 2. Crear entorno virtual
