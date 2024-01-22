@@ -1,4 +1,5 @@
 
+import time
 from asistente import AsistenteVoz
 from camera_senias import Camera
 from aprendizaje import Aprendizaje
