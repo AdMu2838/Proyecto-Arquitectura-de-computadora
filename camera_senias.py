@@ -1,3 +1,4 @@
+
 import customtkinter as ctk
 import csv
 import tkinter as tk
@@ -13,6 +14,7 @@ class Camera:
     def __init__(self):
         # Inicialización de variables y configuración inicial
         self.prev = ""
+        self.video_lable = None
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -61,27 +63,27 @@ class Camera:
     def open_camera1(self):
         global prev
         width, height = 800, 600
-        with mphands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5,static_image_mode=False) as hands:
+        with mp.solutions.hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5,static_image_mode=False) as hands:
                 
-                _, frame = vid.read()
+                _, frame = cv2.VideoCapture(0).read()
                 opencv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 opencv_image = cv2.resize(opencv_image, (width,height))
                             
                 processFrames = hands.process(opencv_image)
                 if processFrames.multi_hand_landmarks:
                     for lm in processFrames.multi_hand_landmarks:
-                        mpdrawing.draw_landmarks(frame, lm, mphands.HAND_CONNECTIONS)
+                        mp.solutions.drawing_utils.draw_landmarks(frame, lm, mp.solutions.hands.HAND_CONNECTIONS)
 
-                        landmark_list = calc_landmark_list(frame, lm)
+                        landmark_list = self.calc_landmark_list(frame, lm)
 
-                        pre_processed_landmark_list = pre_process_landmark(
+                        pre_processed_landmark_list = self.pre_process_landmark(
                         landmark_list)
 
-                        hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+                        hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
 
-                        cur = keypoint_classifier_labels[hand_sign_id]
+                        cur = self.keypoint_classifier_labels[hand_sign_id]
                         if(cur == prev) : 
-                            letter.configure(text=cur)
+                            self.letter.configure(text=cur)
                         elif(cur):
                             prev = cur
                     
@@ -89,8 +91,8 @@ class Camera:
                 frame = cv2.flip(frame,1)
                 captured_image = Image.fromarray(frame)
                 my_image = ctk.CTkImage(dark_image=captured_image,size=(340,335))
-                video_lable.configure(image=my_image)
-                video_lable.after(10, open_camera1)
+                self.video_lable.configure(image=my_image)
+                self.video_lable.after(10, self.open_camera1)
         
 
     def ejecutar(self):
@@ -113,12 +115,12 @@ class Camera:
         window = ctk.CTk()
         window.geometry('1080x1080')
         window.title("HAND SIGNS")
-        prev = ""
+        
 
         # Initialize the video capture
-        vid = cv2.VideoCapture(0)
-        mphands = mp.solutions.hands
-        mpdrawing = mp.solutions.drawing_utils
+        
+        
+      
         width, height = 600, 500
 
         # Create the title label
@@ -156,12 +158,13 @@ class Camera:
         video_frame.pack(side=ctk.TOP,fill=ctk.BOTH,expand = ctk.TRUE ,padx=(10,10),pady=(10,5))
 
         # Create the video label
-        video_lable = ctk.CTkLabel(master=video_frame, text='',height=340,width=365,corner_radius=12)
-        video_lable.pack(fill=ctk.BOTH,padx=(0,0),pady=(0,0))
+        self.video_lable = ctk.CTkLabel(master=video_frame, text='', height=340, width=365, corner_radius=12)
+        self.video_lable.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
+
 
         # Create a button to start the camera feed
-        Camera_feed_start= ctk.CTkButton(master=MyFrame1,text='START',height=40,width=250,border_width=0,corner_radius=12,command=lambda : open_camera1())
-        Camera_feed_start.pack(side = ctk.TOP,pady=(5,10))
+        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='START', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.open_camera1())
+        Camera_feed_start.pack(side=ctk.TOP, pady=(5, 10))
 
         MyFrame2=ctk.CTkFrame(master=main_frame,
                             height=375
@@ -192,3 +195,4 @@ class Camera:
 
         # Start the tkinter main loop
         window.mainloop()
+        
