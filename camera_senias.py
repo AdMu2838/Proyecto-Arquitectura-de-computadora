@@ -11,10 +11,18 @@ import copy
 from datetime import datetime
 
 class Camera:
+    
+    cur = 0
+    window = 0
+
     def __init__(self):
         # Inicialización de variables y configuración inicial
         self.prev = ""
         self.video_lable = None
+        self.keypoint_classifier = None
+        self.cap = cv2.VideoCapture(0)
+        self.keypoint_classifier_labels = []
+        self.letter = None
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -23,7 +31,7 @@ class Camera:
         landmark_point = []
 
         # Iterate over each landmark and convert its coordinates
-        for _, landmark in enumerate(self, landmarks.landmark):
+        for landmark in landmarks.landmark:
             landmark_x = min(int(landmark.x * image_width), image_width - 1)
             landmark_y = min(int(landmark.y * image_height), image_height - 1)
 
@@ -61,52 +69,52 @@ class Camera:
 
     # Function to open the camera and perform hand gesture recognition
     def open_camera1(self):
-        global prev
         width, height = 800, 600
-        with mp.solutions.hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5,static_image_mode=False) as hands:
-                
-                _, frame = cv2.VideoCapture(0).read()
-                opencv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                opencv_image = cv2.resize(opencv_image, (width,height))
-                            
-                processFrames = hands.process(opencv_image)
-                if processFrames.multi_hand_landmarks:
-                    for lm in processFrames.multi_hand_landmarks:
-                        mp.solutions.drawing_utils.draw_landmarks(frame, lm, mp.solutions.hands.HAND_CONNECTIONS)
+        cur = 0
+        with mp.solutions.hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5, static_image_mode=False) as hands:
+            _, frame = self.cap.read()
+            opencv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            opencv_image = cv2.resize(opencv_image, (width, height))
 
-                        landmark_list = self.calc_landmark_list(frame, lm)
+            processFrames = hands.process(opencv_image)
+            if processFrames.multi_hand_landmarks:
+                for lm in processFrames.multi_hand_landmarks:
+                    mp.solutions.drawing_utils.draw_landmarks(frame, lm, mp.solutions.hands.HAND_CONNECTIONS)
 
-                        pre_processed_landmark_list = self.pre_process_landmark(
-                        landmark_list)
+                    landmark_list = self.calc_landmark_list(frame, lm)
 
-                        hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
+                    pre_processed_landmark_list = self.pre_process_landmark(landmark_list)
 
+                    hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
+
+                    print(f"hand_sign_id: {hand_sign_id}")
+                    print(f"len(self.keypoint_classifier_labels): {len(self.keypoint_classifier_labels)}")
+
+                    if 0 <= hand_sign_id < len(self.keypoint_classifier_labels):
                         cur = self.keypoint_classifier_labels[hand_sign_id]
-                        if(cur == prev) : 
+                        if cur == self.prev:
                             self.letter.configure(text=cur)
-                        elif(cur):
-                            prev = cur
-                    
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-                frame = cv2.flip(frame,1)
-                captured_image = Image.fromarray(frame)
-                my_image = ctk.CTkImage(dark_image=captured_image,size=(340,335))
-                self.video_lable.configure(image=my_image)
-                self.video_lable.after(10, self.open_camera1)
-        
+                        elif cur:
+                            self.prev = cur
+                    else:
+                        print("Invalid hand_sign_id:", hand_sign_id)
 
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            frame = cv2.flip(frame, 1)
+            captured_image = Image.fromarray(frame)
+            my_image = ctk.CTkImage(dark_image=captured_image, size=(340, 335))
+            self.video_lable.configure(image=my_image)
+            self.video_lable.after(10, self.open_camera1)
+            
     def ejecutar(self):
 
         # Load the KeyPointClassifier model
-        keypoint_classifier = KeyPointClassifier()
+        self.keypoint_classifier = KeyPointClassifier()
 
         # Read labels from a CSV file
         with open('model/keypoint_classifier/label.csv', encoding='utf-8-sig') as f:
-            keypoint_classifier_labels = csv.reader(f)
-            keypoint_classifier_labels = [
-                row[0] for row in keypoint_classifier_labels
-            ]
-
+            keypoint_classifier_labels_reader = csv.reader(f)
+            self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]
         # Set the appearance mode and color theme for the custom tkinter library
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
@@ -154,7 +162,7 @@ class Camera:
         MyFrame1.pack(fill = ctk.BOTH,expand=ctk.TRUE,side = ctk.LEFT,padx = (10,10),pady=(10,10))
 
         # Create the video frame
-        video_frame = ctk.CTkFrame(master=MyFrame1,height=340,width=365,corner_radius=12)
+        video_frame = ctk.CTkFrame(master=MyFrame1,height=50,width=50,corner_radius=12)
         video_frame.pack(side=ctk.TOP,fill=ctk.BOTH,expand = ctk.TRUE ,padx=(10,10),pady=(10,5))
 
         # Create the video label
@@ -177,21 +185,16 @@ class Camera:
             weight='bold',
             size=200
         )
-        letter = ctk.CTkLabel(MyFrame2,
+        self.letter = ctk.CTkLabel(MyFrame2,
                                 font=myfont,fg_color='#2B2B2B',justify=ctk.CENTER)
-        letter.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
-        letter.configure(text='')
+        self.letter.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        self.letter.configure(text='')
 
         MyFrame3=ctk.CTkFrame(master=window,
                             height=175,
                             corner_radius=12
                             )
         MyFrame3.pack(fill = ctk.X,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
-
-        # Create a textbox for displaying a sentence
-        Sentence = ctk.CTkTextbox(MyFrame3,
-                                font=("Consolas",24))
-        Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
 
         # Start the tkinter main loop
         window.mainloop()
