@@ -1,3 +1,4 @@
+from asistente import AsistenteVoz
 
 import customtkinter as ctk
 import csv
@@ -10,8 +11,10 @@ import itertools
 import copy
 from datetime import datetime
 
-class Camera:
+class Camera (AsistenteVoz):
     def __init__(self):
+        # Llama al constructor de la clase base (AsistenteVoz)
+        super().__init__()
         # Inicialización de variables y configuración inicial
         self.prev = ""
         self.video_lable = None

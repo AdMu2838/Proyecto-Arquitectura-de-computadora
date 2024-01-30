@@ -27,7 +27,7 @@ if __name__ == "__main__":
     mi_camara = Camera()
 
     #PRIMERA PARTE (SALUDO Y NOMBRE)
-    """print("\nSALUDO:")
+    print("\nSALUDO:")
     bienvenida = "Hola. Soy tu Asistente Virtual. Fui creada para instruirte sobre el lenguaje de señas. Antes de empezar ¿Podrias decirme tu nombre?"
     texto_a_audio(bienvenida)
     print("Di tu nombre: ")
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     print(text)
     texto_a_audio(text)
     time.sleep(0.5)
-    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")"""
+    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
     print("dime")
     texto_a_audio("dime")
     
