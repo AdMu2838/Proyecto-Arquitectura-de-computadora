@@ -202,3 +202,7 @@ class Camera (AsistenteVoz):
         # Start the tkinter main loop
         window.mainloop()
         
+
+#Probando zzz
+prueba = Camera()
+prueba.ejecutar()
