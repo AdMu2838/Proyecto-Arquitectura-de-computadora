@@ -24,6 +24,9 @@ import customtkinter as ctk
 import csv
 from PIL import Image, ImageTk
 from model import KeyPointClassifier
+from os import listdir
+from os.path import isfile, join
+from itertools import cycle
 
 class Aprendizaje(AsistenteVoz):
     def __init__(self):
@@ -36,6 +39,16 @@ class Aprendizaje(AsistenteVoz):
         self.keypoint_classifier = None
         self.keypoint_classifier_labels = []
         self.letter = None
+
+        # Nueva variable para almacenar la lista de imágenes
+        self.abecedario_path = "AbecedarioSeñas/"
+        self.image_files = [f for f in listdir(self.abecedario_path) if isfile(join(self.abecedario_path, f))]
+        self.image_cycle = cycle(self.image_files)
+
+        # Variable para almacenar la imagen actual
+        self.current_image = None
+
+        self.static_image_label = None
 
     def mostrar_ventana_aprendizaje(self):
         # Load the KeyPointClassifier model
@@ -76,12 +89,12 @@ class Aprendizaje(AsistenteVoz):
         video_frame = ctk.CTkFrame(master=main_frame, height=340, width=365, corner_radius=12)
         video_frame.pack(side=ctk.TOP, fill=ctk.BOTH, expand=ctk.TRUE, padx=(10, 10), pady=(10, 5))
 
-        # Create the video label (replace this with your static image)
-        image_path = "hola123.jpg"  # Reemplaza con la ruta de tu imagen PNG
-        static_image = Image.open(image_path)
-        static_image = ImageTk.PhotoImage(static_image)
-        static_image_label = ctk.CTkLabel(master=video_frame, image=static_image)
-        static_image_label.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
+        # Crear la imagen inicial
+        initial_image_path = join(self.abecedario_path, self.image_files[0])
+        self.current_image = Image.open(initial_image_path)
+        self.current_image = ImageTk.PhotoImage(self.current_image)
+        self.static_image_label = ctk.CTkLabel(master=video_frame, image=self.current_image)
+        self.static_image_label.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
 
         # Create a button to start the camera feed (replace this with your text)
         Button_feed_start = ctk.CTkButton(master=main_frame, text='NEXT', height=40, width=250, border_width=0,
@@ -110,10 +123,26 @@ class Aprendizaje(AsistenteVoz):
         window.mainloop()
 
     def mostrarImagen(self):
-        # Replace this method with your camera-related logic
-        pass
+        # Ocultar el texto antes de cambiar la imagen
+        self.static_image_label.configure(text='')
+
+        # Cambiar la imagen al siguiente en la lista
+        next_image = next(self.image_cycle)
+        image_path = join(self.abecedario_path, next_image)
+
+        # Cambiar la imagen en la variable de imagen actual
+        self.current_image = Image.open(image_path)
+        self.current_image = ImageTk.PhotoImage(self.current_image)
+        self.static_image_label.configure(image=self.current_image)
+        self.static_image_label.image = self.current_image
+
+        # Cambiar el texto a la letra correspondiente
+        letra = next_image.split(".")[0]
+        self.letter.configure(text=letra)
+
 
     def ejecutar(self):
+        self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
         self.mostrar_ventana_aprendizaje()
 
 
