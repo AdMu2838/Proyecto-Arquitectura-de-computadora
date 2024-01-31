@@ -1,4 +1,3 @@
-
 import customtkinter as ctk
 import csv
 import tkinter as tk
@@ -9,12 +8,10 @@ from model import KeyPointClassifier
 import itertools
 import copy
 from datetime import datetime
+import time
+import random
 
 class Camera:
-    
-    cur = 0
-    window = 0
-
     def __init__(self):
         # Inicialización de variables y configuración inicial
         self.prev = ""
@@ -23,6 +20,28 @@ class Camera:
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
+
+
+    def start_test(self):
+        abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+        test = []
+
+        while (len(test) < 5):
+            letra = random.choice(abc)
+            if letra not in test:
+                test.append(letra)
+
+        def show_next_letter():
+            nonlocal i
+            self.letter.configure(text=test[i])
+            i += 1
+            if i < 5:
+                self.letter.after(3000, show_next_letter)
+
+        i = 0
+        self.letter.configure(text=test[i])
+        self.letter.after(3000, show_next_letter)
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -70,7 +89,6 @@ class Camera:
     # Function to open the camera and perform hand gesture recognition
     def open_camera1(self):
         width, height = 800, 600
-        cur = 0
         with mp.solutions.hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5, static_image_mode=False) as hands:
             _, frame = self.cap.read()
             opencv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -105,7 +123,9 @@ class Camera:
             my_image = ctk.CTkImage(dark_image=captured_image, size=(340, 335))
             self.video_lable.configure(image=my_image)
             self.video_lable.after(10, self.open_camera1)
-            
+
+
+
     def ejecutar(self):
 
         # Load the KeyPointClassifier model
@@ -127,8 +147,6 @@ class Camera:
 
         # Initialize the video capture
         
-        
-      
         width, height = 600, 500
 
         # Create the title label
@@ -162,7 +180,7 @@ class Camera:
         MyFrame1.pack(fill = ctk.BOTH,expand=ctk.TRUE,side = ctk.LEFT,padx = (10,10),pady=(10,10))
 
         # Create the video frame
-        video_frame = ctk.CTkFrame(master=MyFrame1,height=50,width=50,corner_radius=12)
+        video_frame = ctk.CTkFrame(master=MyFrame1,height=340,width=365,corner_radius=12)
         video_frame.pack(side=ctk.TOP,fill=ctk.BOTH,expand = ctk.TRUE ,padx=(10,10),pady=(10,5))
 
         # Create the video label
@@ -171,8 +189,11 @@ class Camera:
 
 
         # Create a button to start the camera feed
-        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='START', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.open_camera1())
+        # Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='START', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.open_camera1())
+        # Camera_feed_start.pack(side=ctk.TOP, pady=(5, 10))
+        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='START', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.start_test())
         Camera_feed_start.pack(side=ctk.TOP, pady=(5, 10))
+        self.open_camera1()
 
         MyFrame2=ctk.CTkFrame(master=main_frame,
                             height=375
@@ -196,6 +217,15 @@ class Camera:
                             )
         MyFrame3.pack(fill = ctk.X,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
 
+        # Create a textbox for displaying a sentence
+        Sentence = ctk.CTkTextbox(MyFrame3,
+                                font=("Consolas",24))
+        Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+
+        
+
         # Start the tkinter main loop
         window.mainloop()
-        
+
+prueba = Camera()
+prueba.ejecutar()
