@@ -8,7 +8,8 @@ from os.path import isfile, join
 from itertools import cycle
 
 class Aprendizaje(AsistenteVoz):
-    def __init__(self, callback=None):
+    # def __init__(self, callback=None):
+    def __init__(self, callback):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
         print("...probando aprendizaje")
@@ -150,7 +151,9 @@ class Aprendizaje(AsistenteVoz):
     def ejecutar(self):
         self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
         self.mostrar_ventana_aprendizaje()
-
+"""
 # Para ejecutar sin necesidad de usar project.py
 prueba = Aprendizaje()
 prueba.ejecutar()
+saca de comentarios esto en init --- # def __init__(self, callback=None):
+"""
