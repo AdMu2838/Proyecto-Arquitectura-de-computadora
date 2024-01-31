@@ -146,7 +146,5 @@ class Aprendizaje(AsistenteVoz):
         self.mostrar_ventana_aprendizaje()
 
 
-# Para ejecutar sin necesidad de usar project.py
-prueba = Aprendizaje()
-prueba.ejecutar()
+
 
