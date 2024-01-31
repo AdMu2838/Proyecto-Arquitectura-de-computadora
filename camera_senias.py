@@ -61,6 +61,7 @@ class Camera:
 
         i = 0
         self.letter.configure(text=test[0])
+        self.testLetter = test[0]
         self.letter.after(10000, show_next_letter)
 
     # Function to calculate the landmark points from an image
