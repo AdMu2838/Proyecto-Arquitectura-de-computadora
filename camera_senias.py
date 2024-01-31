@@ -8,19 +8,25 @@ from model import KeyPointClassifier
 import itertools
 import copy
 from datetime import datetime
+
 import time
 import random
+from reporte import Reporte 
+import sys
 
 class Camera:
     def __init__(self):
         # Inicialización de variables y configuración inicial
-        self.prev = ""
+        self.testLetter = None
+        self.point = 0
+        self.miss = 0
         self.video_lable = None
         self.keypoint_classifier = None
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
-
+        self.reports = []
+        self.begin = False
 
     def start_test(self):
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -32,16 +38,28 @@ class Camera:
             if letra not in test:
                 test.append(letra)
 
+        self.begin = True
+
         def show_next_letter():
+            r = Reporte(self.point, self.miss, self.testLetter)
+            self.reports.append(r)
+            self.point = 0
+            self.miss = 0
             nonlocal i
-            self.letter.configure(text=test[i])
             i += 1
+            self.letter.configure(text=test[i])
+            self.testLetter = test[i]
             if i < 10:
                 self.letter.after(10000, show_next_letter)
+            else:
+                for report in self.reports:
+                    print(report)
+
+                sys.exit()
 
         i = 0
-        self.letter.configure(text=test[i])
-        self.letter.after(0, show_next_letter)
+        self.letter.configure(text=test[0])
+        self.letter.after(10000, show_next_letter)
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -106,12 +124,15 @@ class Camera:
                     hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
 
                     print(f"hand_sign_id: {hand_sign_id}")
-                    print(f"len(self.keypoint_classifier_labels): {len(self.keypoint_classifier_labels)}")
+                    print(f"len(self.keypoint_classifier_labels): {len(self.keypoint_classifier_labels)}") 
+                    
+                    if (self.begin):
+                        actualLetter = self.keypoint_classifier_labels[hand_sign_id]
+                        if (actualLetter == self.testLetter):
+                            self.point += 1
+                        else:
+                            self.miss += 1
 
-                    if 0 <= hand_sign_id < len(self.keypoint_classifier_labels):
-                        cur = self.keypoint_classifier_labels[hand_sign_id]
-                    else:
-                        print("Invalid hand_sign_id:", hand_sign_id)
 
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
             frame = cv2.flip(frame, 1)
