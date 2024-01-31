@@ -1,24 +1,3 @@
-"""from asistente import AsistenteVoz
-
-
-class Aprendizaje(AsistenteVoz):
-
-    def __init__(self):
-        # Llama al constructor de la clase base (AsistenteVoz)
-        super().__init__()
-        print("...probando aprendizaje")
-
-    def ejecutar(self):
-        print("Hola mundo")
-        self.texto_a_audio("Hola mundo")
-        #self.capturar_voz();
-
-
-
-
-#Para ejecutar sin necesidad de usar project.py
-prueba = Aprendizaje()
-prueba.ejecutar()"""
 from asistente import AsistenteVoz
 import customtkinter as ctk
 import csv
@@ -29,9 +8,10 @@ from os.path import isfile, join
 from itertools import cycle
 
 class Aprendizaje(AsistenteVoz):
-    def __init__(self, callback):
+    def __init__(self, callback=None):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
+        print("...probando aprendizaje")
         self.callback = callback
         # Inicialización de variables y configuración inicial
         self.prev = ""
@@ -125,6 +105,9 @@ class Aprendizaje(AsistenteVoz):
         window.mainloop()
 
     def mostrarImagen(self):
+        # Reproduce el mensaje antes de cambiar la imagen
+        self.texto_a_audio("Siguiente")
+
         # Ocultar el texto antes de cambiar la imagen
         self.static_image_label.configure(text='')
 
@@ -135,6 +118,12 @@ class Aprendizaje(AsistenteVoz):
         # Cambiar la imagen en la variable de imagen actual
         self.current_image = Image.open(image_path)
         self.current_image = ImageTk.PhotoImage(self.current_image)
+        self.static_image_label.configure(image=self.current_image)
+        self.static_image_label.image = self.current_image
+
+        # Redimensionar la imagen al tamaño fijo
+        resized_image = Image.open(image_path).resize((250, 250))
+        self.current_image = ImageTk.PhotoImage(resized_image)
         self.static_image_label.configure(image=self.current_image)
         self.static_image_label.image = self.current_image
 
@@ -151,6 +140,6 @@ class Aprendizaje(AsistenteVoz):
         self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
         self.mostrar_ventana_aprendizaje()
 
-
-
-
+#Para ejecutar sin necesidad de usar project.py
+prueba = Aprendizaje()
+prueba.ejecutar()
