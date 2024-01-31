@@ -4,9 +4,11 @@ class Reporte:
         self.point = point
         self.miss = miss
         self.letter = letter
+        self.res = round(((self.point/(self.point + self.miss))*100), 2)
+
+    def result(self):
+        return self.res
 
     def __str__(self):
-        percent = self.point/(self.point + self.miss)
-        percent = percent*100
-        return f"Al realizar la letra {self.letter} obtuvo un {percent}% de éxito"
+        return f"Al realizar la letra {self.letter} obtuvo un {self.res}% de precision"
 

@@ -8,15 +8,17 @@ from model import KeyPointClassifier
 import itertools
 import copy
 from datetime import datetime
+from asistente import AsistenteVoz
 
 import time
 import random
 from reporte import Reporte 
 import sys
 
-class Camera:
+class Camera():
     def __init__(self):
         # Inicialización de variables y configuración inicial
+        self.voz = AsistenteVoz()
         self.testLetter = None
         self.point = 0
         self.miss = 0
@@ -27,13 +29,18 @@ class Camera:
         self.letter = None
         self.reports = []
         self.begin = False
+        self.window = ctk.CTk()
 
     def results(self): 
+        sum = 0
         for report in self.reports:
+            sum += report.result()
             print(report)
+        print(f"\n En general, el participante obtuvo un {sum/10}% de precisión.")
+
 
     def start_test(self):
-        abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
         test = []
 
@@ -159,7 +166,6 @@ class Camera:
         ctk.set_default_color_theme("blue")
 
         # Create the main self.window
-        self.window = ctk.CTk()
         self.window.geometry('1080x1080')
         self.window.title("HAND SIGNS")
         
@@ -246,5 +252,11 @@ class Camera:
         # Start the tkinter main loop
         self.window.mainloop()
 
+    def main(self):
+        self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en el que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
+        self.window.after(20000, self.ejecutar())
+
+
 prueba = Camera()
-prueba.ejecutar()
+prueba.main()
+
