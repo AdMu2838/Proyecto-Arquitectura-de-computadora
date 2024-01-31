@@ -27,7 +27,7 @@ class Camera:
 
         test = []
 
-        while (len(test) < 5):
+        while (len(test) < 11):
             letra = random.choice(abc)
             if letra not in test:
                 test.append(letra)
@@ -36,12 +36,12 @@ class Camera:
             nonlocal i
             self.letter.configure(text=test[i])
             i += 1
-            if i < 5:
-                self.letter.after(3000, show_next_letter)
+            if i < 10:
+                self.letter.after(10000, show_next_letter)
 
         i = 0
         self.letter.configure(text=test[i])
-        self.letter.after(3000, show_next_letter)
+        self.letter.after(0, show_next_letter)
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -110,10 +110,6 @@ class Camera:
 
                     if 0 <= hand_sign_id < len(self.keypoint_classifier_labels):
                         cur = self.keypoint_classifier_labels[hand_sign_id]
-                        if cur == self.prev:
-                            self.letter.configure(text=cur)
-                        elif cur:
-                            self.prev = cur
                     else:
                         print("Invalid hand_sign_id:", hand_sign_id)
 
@@ -123,7 +119,6 @@ class Camera:
             my_image = ctk.CTkImage(dark_image=captured_image, size=(340, 335))
             self.video_lable.configure(image=my_image)
             self.video_lable.after(10, self.open_camera1)
-
 
 
     def ejecutar(self):
