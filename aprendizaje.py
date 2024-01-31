@@ -19,6 +19,7 @@ class Aprendizaje(AsistenteVoz):
 #Para ejecutar sin necesidad de usar project.py
 prueba = Aprendizaje()
 prueba.ejecutar()"""
+import time
 from asistente import AsistenteVoz
 import customtkinter as ctk
 import csv
@@ -27,6 +28,8 @@ from model import KeyPointClassifier
 from os import listdir
 from os.path import isfile, join
 from itertools import cycle
+
+from test import Test
 
 class Aprendizaje(AsistenteVoz):
     def __init__(self):
@@ -123,6 +126,9 @@ class Aprendizaje(AsistenteVoz):
         window.mainloop()
 
     def mostrarImagen(self):
+        # Reproduce el mensaje antes de cambiar la imagen
+        # self.texto_a_audio("Siguiente letra")
+
         # Ocultar el texto antes de cambiar la imagen
         self.static_image_label.configure(text='')
 
@@ -136,17 +142,94 @@ class Aprendizaje(AsistenteVoz):
         self.static_image_label.configure(image=self.current_image)
         self.static_image_label.image = self.current_image
 
+        # Redimensionar la imagen al tamaño fijo
+        resized_image = Image.open(image_path).resize((250, 250))
+        self.current_image = ImageTk.PhotoImage(resized_image)
+        self.static_image_label.configure(image=self.current_image)
+        self.static_image_label.image = self.current_image
+
         # Cambiar el texto a la letra correspondiente
         letra = next_image.split(".")[0]
         self.letter.configure(text=letra)
 
+        # Verificar si hemos alcanzado la última letra
+        if letra == 'Z':
+            # Cambiar el texto a "END"
+            self.letter.configure(text='END')
+
+            # Después de 2 segundos, cerrar la ventana y volver al asistente virtual
+            self.static_image_label.after(2000, self.cerrar_ventana_aprendizaje)
+
+    def cerrar_ventana_aprendizaje(self):
+        # Destruir la ventana de aprendizaje
+        self.static_image_label.master.master.destroy()
+
+        # Volver al asistente virtual
+        self.volver_al_asistente_virtual()
+
+    def volver_al_asistente_virtual(self):
+        # Agrega el código para volver al asistente virtual y ofrecer opciones adicionales
+        self.texto_a_audio("Terminaste la fase de aprendizaje. Ahora voy a explicarte sobre las otras opciones que tiene este programa. Tienes 2 opciones para escoger.")
+        text = (
+        "\n 1) Test"
+        "\n 2) Juego"
+        )
+        print(text)
+        self.texto_a_audio(text)
+
+        text = (
+            "\n La opción Test es donde podrás poner en práctica lo que aprendiste mediante exámenes."
+            "\n La opción Juego, donde también podrás demostrar lo que aprendiste jugando."
+        )
+        print(text)
+        self.texto_a_audio(text)
+
+        text = "¿Qué opción eliges?"
+        print(text)
+        self.texto_a_audio(text)
+        time.sleep(0.5)
+        self.texto_a_audio("¿Tests? o ¿Juego?")
+        print("dime")
+        self.texto_a_audio("dime")
+
+        while True:
+            respuesta = self.enviar_voz()
+            print("Tu respuesta " + respuesta)
+
+            text = f"\nElegiste la opción de {respuesta}"
+
+            if respuesta in ["test", "juego"]:
+                print(text)
+                self.texto_a_audio(text)
+
+                if respuesta == "test":
+                    # Inicia la opción de Test
+                    mi_test = Test()
+                    mi_test.ejecutar()
+                
+                elif respuesta == "juego":
+                    # Inicia la opción de Juego
+                    # mi_camara = Camera()
+                    # mi_camara.ejecutar()
+
+                    # Inicia la opción de Test por el momento
+                    mi_test = Test()
+                    mi_test.ejecutar()
+                break
+    
+            else:
+                text = (
+                    f"{self.nombre} creo que no has respondido con alguna de las instrucciones indicadas anteriormente."
+                    "\nResponde con una de las alternativas mencionadas."
+                )
+                print(text)
+                self.texto_a_audio(text)
 
     def ejecutar(self):
-        self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
+        # self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
         self.mostrar_ventana_aprendizaje()
 
 
 # Para ejecutar sin necesidad de usar project.py
 prueba = Aprendizaje()
 prueba.ejecutar()
-

@@ -60,7 +60,7 @@ if __name__ == "__main__":
     texto_a_audio(text)
 
     text = (
-        "\n La opción Aprendizaje es donde podrás aprender todo con respecto a la Estructura de un computador."
+        "\n La opción Aprendizaje es donde podrás aprender la seña de cada letra del abecedario."
         "\n La opción Tests es donde podrás poner en práctica lo que aprendiste mediante exámenes."
         "\n Y por último, la tercer opción, es Juego, donde tambien podrás demostrar lo que aprendiste jugando."
     )
