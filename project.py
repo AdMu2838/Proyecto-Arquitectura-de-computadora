@@ -18,6 +18,14 @@ def capturar_voz():
 def enviar_voz():
     return asistente_voz.enviar_voz()
 
+def presentar_opciones():
+    text = "¿Qué opción eliges?"
+    print(text)
+    texto_a_audio(text)
+    time.sleep(0.5)
+    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
+    print("dime")
+    texto_a_audio("dime")
 
 #INICIO
 if __name__ == "__main__":
@@ -60,20 +68,14 @@ if __name__ == "__main__":
     texto_a_audio(text)
 
     text = (
-        "\n La opción Aprendizaje es donde podrás aprender todo con respecto a la Estructura de un computador."
+        "\n La opción Aprendizaje es donde podrás aprender todo con respecto al lenguaje de señas."
         "\n La opción Tests es donde podrás poner en práctica lo que aprendiste mediante exámenes."
         "\n Y por último, la tercer opción, es Juego, donde tambien podrás demostrar lo que aprendiste jugando."
     )
     print(text)
     texto_a_audio(text)
 
-    text = "¿Qué opción eliges?"
-    print(text)
-    texto_a_audio(text)
-    time.sleep(0.5)
-    texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
-    print("dime")
-    texto_a_audio("dime")
+    presentar_opciones()
     
     
     while True:
