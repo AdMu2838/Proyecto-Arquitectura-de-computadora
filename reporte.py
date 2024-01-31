@@ -10,5 +10,3 @@ class Reporte:
         percent = percent*100
         return f"Al realizar la letra {self.letter} obtuvo un {percent}% de éxito"
 
-r = Reporte(10, 10, "A")
-print(r)

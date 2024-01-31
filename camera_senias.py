@@ -28,6 +28,10 @@ class Camera:
         self.reports = []
         self.begin = False
 
+    def results(self): 
+        for report in self.reports:
+            print(report)
+
     def start_test(self):
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -52,10 +56,8 @@ class Camera:
             if i < 10:
                 self.letter.after(10000, show_next_letter)
             else:
-                for report in self.reports:
-                    print(report)
-
-                sys.exit()
+                self.window.quit()
+                self.results()
 
         i = 0
         self.letter.configure(text=test[0])
@@ -155,10 +157,10 @@ class Camera:
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
 
-        # Create the main window
-        window = ctk.CTk()
-        window.geometry('1080x1080')
-        window.title("HAND SIGNS")
+        # Create the main self.window
+        self.window = ctk.CTk()
+        self.window.geometry('1080x1080')
+        self.window.title("HAND SIGNS")
         
 
         # Initialize the video capture
@@ -173,7 +175,7 @@ class Camera:
             size=25
         )
         Label = ctk.CTkLabel(
-            window,
+            self.window,
             text = 'HAND SIGNS',
             fg_color='steelblue',
             text_color= 'white',
@@ -183,7 +185,7 @@ class Camera:
         Label.pack(side = ctk.TOP,fill=ctk.X,pady=(10,4),padx=(10,10))
 
         # Create the main frame
-        main_frame = ctk.CTkFrame(master=window,
+        main_frame = ctk.CTkFrame(master=self.window,
                                 height=770,
                                 corner_radius=8
                                 )
@@ -227,7 +229,7 @@ class Camera:
         self.letter.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
         self.letter.configure(text='')
 
-        MyFrame3=ctk.CTkFrame(master=window,
+        MyFrame3=ctk.CTkFrame(master=self.window,
                             height=175,
                             corner_radius=12
                             )
@@ -241,7 +243,7 @@ class Camera:
         
 
         # Start the tkinter main loop
-        window.mainloop()
+        self.window.mainloop()
 
 prueba = Camera()
 prueba.ejecutar()
