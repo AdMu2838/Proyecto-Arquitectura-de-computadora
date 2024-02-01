@@ -20,6 +20,9 @@ class Juego:
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
+        self.EntradaTexto = None
+        self.Texto1 = None
+        self.Texto2 = None
         self.palabra_aleatoria_label = None
         self.resultado_label = None
         self.canvas_ahorcado = None
@@ -82,7 +85,8 @@ class Juego:
                             self.letter.configure(text=cur)
                         elif cur:
                             self.prev = cur
-                        self.comparar(cur, self.palabra_aleatoria_label.cget("text"))
+                        
+                        #self.comparar(cur, self.palabra_aleatoria_label.get("text"))
                     else:
                         print("Invalid hand_sign_id:", hand_sign_id)
 
@@ -97,14 +101,14 @@ class Juego:
         self.palabra_aleatoria_label.configure(text=requests.get("https://random-word-api.herokuapp.com/word?number=1").json()[0])
         #self.palabra_aleatoria_label.configure(text="C")
     
-    def comparar(self, cur, letra):
-        if cur == letra:
-            self.resultado_label.configure(text="CORRECTO")
-        elif cur:
-            self.resultado_label.configure(text="INCORRECTO")
-            self.count += 1
-            self.__Dibujo()
-            #self.dibujar_ahorcado(self.canvas_ahorcado, self.count)
+    # def comparar(self, cur, letra):
+    #     if cur == letra:
+    #         self.resultado_label.configure(text="CORRECTO")
+    #     elif cur:
+    #         self.resultado_label.configure(text="INCORRECTO")
+    #         self.count += 1
+    #         self.__Dibujo()
+    #         #self.dibujar_ahorcado(self.canvas_ahorcado, self.count)
     def JuegoNuevo(self):
         self.EstamosJugando=True
         self.ObjetoJuego.nuevojuego()
@@ -125,17 +129,17 @@ class Juego:
         if self.EstamosJugando:
             letrero=""
             for x in self.ObjetoJuego.getLetrero(): letrero+=x+" "
-            self.Texto1.set(letrero)
+            self.Texto1.configure(letrero)
             mensaje="Tus jugadas: "
             for x in self.ObjetoJuego.getLetrasUsadas():mensaje+=x
-            self.Texto2.set(mensaje)
+            self.Texto2.configure(mensaje)
         else:
             if self.ObjetoJuego.getVictoria():
-                self.Texto1.set("¡Felicidades Has ganado! :) ")
-                self.Texto2.set("La palabra es "+self.ObjetoJuego.getPalabra())
+                self.Texto1.configure("¡Felicidades Has ganado! :) ")
+                self.Texto2.configure("La palabra es "+self.ObjetoJuego.getPalabra())
             else:
-                self.Texto1.set("Lo siento, perdiste :( ")
-                self.Texto2.set("La palabra era "+self.ObjetoJuego.getPalabra())
+                self.Texto1.configure("Lo siento, perdiste :( ")
+                self.Texto2.configure("La palabra era "+self.ObjetoJuego.getPalabra())
         self.__Dibujo()        
 
     def __Dibujo(self):

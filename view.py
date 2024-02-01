@@ -64,7 +64,7 @@ class Interface:
         MyFrame3 = ctk.CTkFrame(master=main_frame, height=375)
         MyFrame3.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10)) 
 
-        mi_juego.canvas_ahorcado = ctk.CTkCanvas(MyFrame3, height=200, width=200, bg="dark green")
+        mi_juego.canvas_ahorcado = ctk.CTkCanvas(MyFrame3, height=200, width=200, bg="blue")
         mi_juego.canvas_ahorcado.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
         
         # 
@@ -74,22 +74,29 @@ class Interface:
         # Sentence = ctk.CTkTextbox(MyFrame3,
         #                         font=("Consolas",24))
         # Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
-        BotonEnviarTexto = ctk.CTkButton(MyFrame4,text=">>>",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.change_text())
-        EntradaTexto = ctk.CTkEntry(MyFrame4,width=3)
-        BotonNuevoJuego = ctk.CTkButton(MyFrame4,text="Nuevo Juego",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.new_game())
-        cambio_palabra = ctk.CTkButton(master=MyFrame4, text="cambiar", height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.change_text())
-        BotonEnviarTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        EntradaTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        BotonNuevoJuego.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        cambio_palabra.pack(side=ctk.TOP, pady=(5, 10))
 
-        mi_juego.palabra_aleatoria_label = ctk.CTkLabel(MyFrame4, font=("Consolas", 24))
-        mi_juego.palabra_aleatoria_label.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        mi_juego.change_text()
+        mi_juego.Texto1=ctk.CTkLabel(MyFrame4, text="Bienvenido al juego del Ahorcado", font=("Consolas", 24),width=30,height=2)
+        mi_juego.Texto2=ctk.CTkLabel(MyFrame4, text="aasdf", font=("Consolas", 24),width=40,height=2)
+        BotonEnviarTexto = ctk.CTkButton(MyFrame4,text=">>>",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.BotonEnviar())
+        mi_juego.EntradaTexto = ctk.CTkEntry(MyFrame4,width=3)
+        BotonNuevoJuego = ctk.CTkButton(MyFrame4,text="Nuevo Juego",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.JuegoNuevo())
+        # cambio_palabra = ctk.CTkButton(master=MyFrame4, text="cambiar", height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.change_text())
+        mi_juego.Texto1.pack(side=ctk.TOP, pady=(5, 10))
+        mi_juego.Texto2.pack(side=ctk.TOP, pady=(5, 10))
+        BotonEnviarTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        mi_juego.EntradaTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        BotonNuevoJuego.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        # Texto1.configure("Bienvenido al juego del Ahorcado")
+        # Texto2.configure("ENTER o CTRL para juego nuevo, ESC para salir")
+        # cambio_palabra.pack(side=ctk.TOP, pady=(5, 10))
+
+        # mi_juego.palabra_aleatoria_label = ctk.CTkLabel(MyFrame4, font=("Consolas", 24))
+        # mi_juego.palabra_aleatoria_label.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        # mi_juego.change_text()
         
-        mi_juego.resultado_label = ctk.CTkLabel(MyFrame4, font=("Consolas", 24))
-        mi_juego.resultado_label.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        mi_juego.resultado_label.configure(text= "RESULTADO")
+        # mi_juego.resultado_label = ctk.CTkLabel(MyFrame4, font=("Consolas", 24))
+        # mi_juego.resultado_label.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        # mi_juego.resultado_label.configure(text= "RESULTADO")
 
         window.mainloop()
 
