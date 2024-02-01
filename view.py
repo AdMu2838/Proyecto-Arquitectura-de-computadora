@@ -29,14 +29,7 @@ class Interface:
         # Create the title label
         i = 0
         title = ctk.CTkFont(family='Consolas', weight='bold', size=25)
-        Label = ctk.CTkLabel(
-            window,
-            text = 'HAND SIGNS',
-            fg_color='steelblue',
-            text_color= 'white',
-            height= 40,
-            font=title,
-            corner_radius= 8)
+        Label = ctk.CTkLabel(window, text = 'HAND SIGNS', fg_color='steelblue', text_color= 'white', height= 40, font=title, corner_radius= 8)
         Label.pack(side = ctk.TOP,fill=ctk.X,pady=(10,4),padx=(10,10))
 
         # Create the main frame
@@ -81,7 +74,13 @@ class Interface:
         # Sentence = ctk.CTkTextbox(MyFrame3,
         #                         font=("Consolas",24))
         # Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        BotonEnviarTexto = ctk.CTkButton(MyFrame4,text=">>>",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.change_text())
+        EntradaTexto = ctk.CTkEntry(MyFrame4,width=3)
+        BotonNuevoJuego = ctk.CTkButton(MyFrame4,text="Nuevo Juego",height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.new_game())
         cambio_palabra = ctk.CTkButton(master=MyFrame4, text="cambiar", height=40, width=250, border_width=0, corner_radius=12, command=lambda: mi_juego.change_text())
+        BotonEnviarTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        EntradaTexto.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
+        BotonNuevoJuego.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
         cambio_palabra.pack(side=ctk.TOP, pady=(5, 10))
 
         mi_juego.palabra_aleatoria_label = ctk.CTkLabel(MyFrame4, font=("Consolas", 24))
