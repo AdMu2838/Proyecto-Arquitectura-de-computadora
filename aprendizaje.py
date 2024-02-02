@@ -29,9 +29,11 @@ from os.path import isfile, join
 from itertools import cycle
 
 class Aprendizaje(AsistenteVoz):
+    # def __init__(self, callback=None):
     def __init__(self, callback):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
+        print("...probando aprendizaje")
         self.callback = callback
         # Inicialización de variables y configuración inicial
         self.prev = ""
@@ -97,7 +99,10 @@ class Aprendizaje(AsistenteVoz):
         self.static_image_label.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
 
         # Create a button to start the camera feed (replace this with your text)
-        Button_feed_start = ctk.CTkButton(master=main_frame, text='NEXT', height=40, width=250, border_width=0,
+        Button_feed_start = ctk.CTkButton(master=main_frame, text='ANTERIOR', height=40, width=250, border_width=0,
+                                           corner_radius=12, command=lambda: self.mostrarImagen(anterior=True))
+        Button_feed_start.pack(side=ctk.TOP, pady=(5, 10))
+        Button_feed_start = ctk.CTkButton(master=main_frame, text='SIGUIENTE', height=40, width=250, border_width=0,
                                            corner_radius=12, command=lambda: self.mostrarImagen())
         Button_feed_start.pack(side=ctk.TOP, pady=(5, 10))
         Button_back_to_options = ctk.CTkButton(master=main_frame, text='Volver a Opciones', height=40, width=250,
@@ -108,10 +113,10 @@ class Aprendizaje(AsistenteVoz):
         letter_frame.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Create a font for displaying letters
-        myfont = ctk.CTkFont(family='Consolas', weight='bold', size=200)
+        myfont = ctk.CTkFont(family='Consolas', weight='bold', size=100)
         self.letter = ctk.CTkLabel(letter_frame, font=myfont, fg_color='#2B2B2B', justify=ctk.CENTER)
         self.letter.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
-        self.letter.configure(text='A')
+        self.letter.configure(text='Abecedario')
 
         # Create a textbox for displaying a sentence
         sentence_frame = ctk.CTkFrame(master=window, height=175, corner_radius=12)
@@ -124,13 +129,19 @@ class Aprendizaje(AsistenteVoz):
         # Start the tkinter main loop
         window.mainloop()
 
-    def mostrarImagen(self):
+    def mostrarImagen(self, anterior=False):
         # Ocultar el texto antes de cambiar la imagen
         self.static_image_label.configure(text='')
 
-        # Cambiar la imagen al siguiente en la lista
-        next_image = next(self.image_cycle)
-        image_path = join(self.abecedario_path, next_image)
+        # Cambiar la imagen al siguiente o anterior en la lista
+        if anterior:
+            prev_image = self.image_files.pop()
+            self.image_files.insert(0, prev_image)
+        else:
+            next_image = self.image_files.pop(0)
+            self.image_files.append(next_image)
+
+        image_path = join(self.abecedario_path, self.image_files[0])
 
         # Cambiar la imagen en la variable de imagen actual
         self.current_image = Image.open(image_path)
@@ -138,8 +149,19 @@ class Aprendizaje(AsistenteVoz):
         self.static_image_label.configure(image=self.current_image)
         self.static_image_label.image = self.current_image
 
+        # Redimensionar la imagen al tamaño fijo
+        resized_image = Image.open(image_path).resize((250, 250))
+        self.current_image = ImageTk.PhotoImage(resized_image)
+        self.static_image_label.configure(image=self.current_image)
+        self.static_image_label.image = self.current_image
+
+        # Obtener la letra actual
+        letra = self.image_files[0].split(".")[0]
+
+        # Decir el nombre de la letra actual
+        self.texto_a_audio(letra)
+
         # Cambiar el texto a la letra correspondiente
-        letra = next_image.split(".")[0]
         self.letter.configure(text=letra)
 
     def cerrar_ventana_aprendizaje(self, window):
@@ -150,7 +172,9 @@ class Aprendizaje(AsistenteVoz):
     def ejecutar(self):
         self.texto_a_audio("Bienvenido a la interfaz de Aprendizaje, se mostraran el abecedario en señas, con presionar next puedes moverte a la siguiente letra")
         self.mostrar_ventana_aprendizaje()
-
-
-
-
+"""
+# Para ejecutar sin necesidad de usar project.py
+prueba = Aprendizaje()
+prueba.ejecutar()
+saca de comentarios esto en init --- # def __init__(self, callback=None):
+"""
