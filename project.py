@@ -8,7 +8,7 @@ class VirtualAssistant:
     def __init__(self):
         self.asistente_voz = AsistenteVoz()
         self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
-        self.mi_test = Test()
+        
         
         
     def texto_a_audio(self, comando):
@@ -35,15 +35,15 @@ class VirtualAssistant:
 
             text = f"\nElegiste la opción de {respuesta}"
 
-            if respuesta in ["aprendizaje", "test", "juego"]:
+            if respuesta in ["aprendizaje", "prueba", "juego"]:
                 print(text)
                 self.texto_a_audio(text)
 
                 if respuesta == "aprendizaje":
                     self.mi_aprendizaje.ejecutar()
 
-                elif respuesta == "test":
-                    self.mi_test.ejecutar()
+                elif respuesta == "prueba":
+                    Test(callback=self.presentar_opciones).main()
 
                 elif respuesta == "juego":
                     print("\n INICIALIZANDING...")
