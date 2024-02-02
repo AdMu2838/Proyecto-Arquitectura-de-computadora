@@ -1,15 +1,17 @@
-from asistente import AsistenteVoz
 
 import customtkinter as ctk
+import csv
+import tkinter as tk
 import cv2
+from PIL import Image, ImageTk
 import mediapipe as mp
+from model import KeyPointClassifier
 import itertools
 import copy
+from datetime import datetime
 
-class Camera (AsistenteVoz):
+class Camera:
     def __init__(self):
-        # Llama al constructor de la clase base (AsistenteVoz)
-        super().__init__()
         # Inicialización de variables y configuración inicial
         self.prev = ""
         self.video_lable = None
@@ -17,10 +19,6 @@ class Camera (AsistenteVoz):
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
-        self.palabra_aleatoria_label = None
-        self.resultado_label = None
-        self.canvas_ahorcado = None
-        self.count = 0
 
     # Function to calculate the landmark points from an image
     def calc_landmark_list(self, image, landmarks):
@@ -64,6 +62,7 @@ class Camera (AsistenteVoz):
 
         return temp_landmark_list
 
+
     # Function to open the camera and perform hand gesture recognition
     def open_camera1(self):
         width, height = 800, 600
@@ -92,7 +91,6 @@ class Camera (AsistenteVoz):
                             self.letter.configure(text=cur)
                         elif cur:
                             self.prev = cur
-                        self.comparar(cur, self.palabra_aleatoria_label.cget("text"))
                     else:
                         print("Invalid hand_sign_id:", hand_sign_id)
 
@@ -102,46 +100,102 @@ class Camera (AsistenteVoz):
             my_image = ctk.CTkImage(dark_image=captured_image, size=(340, 335))
             self.video_lable.configure(image=my_image)
             self.video_lable.after(10, self.open_camera1)
-    
-    def change_text(self):
-        #self.palabra_aleatoria_label.configure(text=requests.get("https://random-word-api.herokuapp.com/word?number=1").json()[0])
-        self.palabra_aleatoria_label.configure(text="C")
+            
+    def ejecutar(self):
 
-    def comparar(self, cur, letra):
-        if cur == letra:
-            self.resultado_label.configure(text="CORRECTO")
-        elif cur:
-            self.resultado_label.configure(text="INCORRECTO")
-            self.count += 1
-            self.dibujar_ahorcado(self.canvas_ahorcado, self.count)
+        # Load the KeyPointClassifier model
+        self.keypoint_classifier = KeyPointClassifier()
 
-    def dibujar_ahorcado(self, canvas, intentos):
-        # Dibujar la cabeza
-        if intentos == 1:
-            canvas.create_oval(50, 50, 100, 100, outline='black', width=4)
+        # Read labels from a CSV file
+        with open('model/keypoint_classifier/label.csv', encoding='utf-8-sig') as f:
+            keypoint_classifier_labels_reader = csv.reader(f)
+            self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]
+        # Set the appearance mode and color theme for the custom tkinter library
+        ctk.set_appearance_mode("Dark")
+        ctk.set_default_color_theme("blue")
 
-        # Dibujar el cuerpo
-        if intentos == 2:
-            canvas.create_line(100, 100, 100, 150, fill='black', width=4)
+        # Create the main window
+        window = ctk.CTk()
+        window.geometry('1080x1080')
+        window.title("HAND SIGNS")
+        
 
-        if intentos == 3:
-            # Dibujar el brazo izquierdo
-            canvas.create_line(100, 110, 80, 130, fill='black', width=4)
+        # Initialize the video capture
+        
+        
+      
+        width, height = 600, 500
 
-        if intentos == 4:
-            # Dibujar el brazo derecho
-            canvas.create_line(100, 110, 120, 130, fill='black', width=2)
+        # Create the title label
+        i = 0
+        title = ctk.CTkFont(
+            family='Consolas',
+            weight='bold',
+            size=25
+        )
+        Label = ctk.CTkLabel(
+            window,
+            text = 'HAND SIGNS',
+            fg_color='steelblue',
+            text_color= 'white',
+            height= 40,
+            font=title,
+            corner_radius= 8)
+        Label.pack(side = ctk.TOP,fill=ctk.X,pady=(10,4),padx=(10,10))
 
-        if intentos == 5:
-            # Dibujar la pierna izquierda
-            canvas.create_line(100, 150, 80, 170, fill='black', width=2)
+        # Create the main frame
+        main_frame = ctk.CTkFrame(master=window,
+                                height=770,
+                                corner_radius=8
+                                )
 
-        if intentos == 6:
-            # Dibujar la pierna derecha
-            canvas.create_line(100, 150, 120, 170, fill='black', width=2)
+        main_frame.pack(fill = ctk.X , padx=(10,10),pady=(5,0))
+        MyFrame1=ctk.CTkFrame(master=main_frame,
+                            height = 375,
+                            width=365
+                            )
+        MyFrame1.pack(fill = ctk.BOTH,expand=ctk.TRUE,side = ctk.LEFT,padx = (10,10),pady=(10,10))
 
-    # Llama a esta función para dibujar la figura del ahorcado
+        # Create the video frame
+        video_frame = ctk.CTkFrame(master=MyFrame1,height=340,width=365,corner_radius=12)
+        video_frame.pack(side=ctk.TOP,fill=ctk.BOTH,expand = ctk.TRUE ,padx=(10,10),pady=(10,5))
 
-#Probando zzz
-prueba = Camera()
-prueba.ejecutar()
+        # Create the video label
+        self.video_lable = ctk.CTkLabel(master=video_frame, text='', height=340, width=365, corner_radius=12)
+        self.video_lable.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
+
+
+        # Create a button to start the camera feed
+        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='START', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.open_camera1())
+        Camera_feed_start.pack(side=ctk.TOP, pady=(5, 10))
+
+        MyFrame2=ctk.CTkFrame(master=main_frame,
+                            height=375
+                            ) 
+        MyFrame2.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+
+        # Create a font for displaying letters
+        myfont = ctk.CTkFont(
+            family='Consolas',
+            weight='bold',
+            size=200
+        )
+        self.letter = ctk.CTkLabel(MyFrame2,
+                                font=myfont,fg_color='#2B2B2B',justify=ctk.CENTER)
+        self.letter.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        self.letter.configure(text='')
+
+        MyFrame3=ctk.CTkFrame(master=window,
+                            height=175,
+                            corner_radius=12
+                            )
+        MyFrame3.pack(fill = ctk.X,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+
+        # Create a textbox for displaying a sentence
+        Sentence = ctk.CTkTextbox(MyFrame3,
+                                font=("Consolas",24))
+        Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+
+        # Start the tkinter main loop
+        window.mainloop()
+        
