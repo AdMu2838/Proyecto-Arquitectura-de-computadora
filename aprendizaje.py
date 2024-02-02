@@ -32,10 +32,10 @@ from itertools import cycle
 from test import Test
 
 class Aprendizaje(AsistenteVoz):
-    def __init__(self):
+    def __init__(self, callback):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
-
+        self.callback = callback
         # Inicialización de variables y configuración inicial
         self.prev = ""
         self.video_lable = None
@@ -103,7 +103,9 @@ class Aprendizaje(AsistenteVoz):
         Button_feed_start = ctk.CTkButton(master=main_frame, text='NEXT', height=40, width=250, border_width=0,
                                            corner_radius=12, command=lambda: self.mostrarImagen())
         Button_feed_start.pack(side=ctk.TOP, pady=(5, 10))
-
+        Button_back_to_options = ctk.CTkButton(master=main_frame, text='Volver a Opciones', height=40, width=250,
+                                           border_width=0, corner_radius=12, command=lambda: self.cerrar_ventana_aprendizaje(window))
+        Button_back_to_options.pack(side=ctk.TOP, pady=(5, 10))
         # Create a frame for the letter display
         letter_frame = ctk.CTkFrame(master=main_frame, height=375)
         letter_frame.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
