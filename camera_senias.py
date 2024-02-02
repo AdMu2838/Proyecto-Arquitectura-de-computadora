@@ -15,6 +15,12 @@ import random
 from reporte import Reporte 
 import sys
 
+import_interfaz = "interfaz"
+interfaz = __import__(import_interfaz)  
+
+Interfaz = interfaz.Interfaz
+
+
 class Camera():
     def __init__(self):
         # Inicialización de variables y configuración inicial
@@ -31,12 +37,48 @@ class Camera():
         self.begin = False
         self.window = ctk.CTk()
 
+    def addLabel(self,resScreen, texto, fuente, i):
+        label=tk.Label(resScreen, text=texto, font=fuente)  
+        label.grid(row=i, column=0)
+        label.grid_rowconfigure(0, weight=1)
+        label.grid_columnconfigure(0, weight=1)
+        label.pack()
+
+    def addButton(self,resScreen, texto, action, i):
+        button=tk.Button(resScreen, text=texto, command=action)  
+        button.grid(row=i, column=0)
+        button.grid_rowconfigure(0, weight=1)
+        button.grid_columnconfigure(0, weight=1)
+        button.pack()
+
     def results(self): 
-        sum = 0
+        suma = 0
+        puntajes = []
+
+        resScreen = tk.Tk()
+
+        resScreen.title("Mi Interfaz")
+
+        resScreen.resizable(False, False) 
+        screen_width = resScreen.winfo_screenwidth()
+        screen_height = resScreen.winfo_screenheight()
+        x = (screen_width/2) - (500/2)
+        y = (screen_height/2) - (300/2)
+        resScreen.geometry('%dx%d+%d+%d' % (500, 300, x, y))
+
+        self.addLabel(resScreen, "Resultados del Test de Gestos", "-size 16 -weight bold", 0)
+
+        i = 1
         for report in self.reports:
-            sum += report.result()
-            print(report)
-        print(f"\n En general, el participante obtuvo un {sum/10}% de precisión.")
+            suma += report.result()
+            self.addLabel(resScreen, report, "Aerial 8", i)
+            i = i + 1
+
+        conclusion = f"\n En general, el participante obtuvo un {suma/10}% de precisión."
+        self.addLabel(resScreen, conclusion, "Aerial 10 Bold", i+1)
+
+        self.addButton(resScreen, "Otro test", self.ejecutar())
+        self.addButton(resScreen, "Regresar", resScreen.quit())
 
 
     def start_test(self):
@@ -60,10 +102,11 @@ class Camera():
             i += 1
             self.letter.configure(text=test[i])
             self.testLetter = test[i]
-            if i < 10:
+            if i < 2:
                 self.letter.after(10000, show_next_letter)
             else:
                 self.window.quit()
+                self.window.destroy()
                 self.results()
 
         i = 0

@@ -8,7 +8,7 @@ class Interfaz:
 
     def setup_ui(self):
         self.window.title("Resultados del Test de Gestos")
-        self.window.geometry("400x300")
+        self.window.geometry("800x600")
 
         label = CTkLabel(self.window, text="Resultados del Test", font=("Arial", 16))
         label.pack(pady=10)
