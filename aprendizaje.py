@@ -21,9 +21,7 @@ prueba = Aprendizaje()
 prueba.ejecutar()"""
 from asistente import AsistenteVoz
 import customtkinter as ctk
-import csv
 from PIL import Image, ImageTk
-from model import KeyPointClassifier
 from os import listdir
 from os.path import isfile, join
 from itertools import cycle
@@ -53,13 +51,13 @@ class Aprendizaje(AsistenteVoz):
         self.static_image_label = None
 
     def mostrar_ventana_aprendizaje(self):
-        # Load the KeyPointClassifier model
+        """# Load the KeyPointClassifier model
         self.keypoint_classifier = KeyPointClassifier()
 
         # Read labels from a CSV file
         with open('model/keypoint_classifier/label.csv', encoding='utf-8-sig') as f:
             keypoint_classifier_labels_reader = csv.reader(f)
-            self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]
+            self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]"""
 
         # Set the appearance mode and color theme for the custom tkinter library
         ctk.set_appearance_mode("Dark")
@@ -95,15 +93,16 @@ class Aprendizaje(AsistenteVoz):
         initial_image_path = join(self.abecedario_path, self.image_files[0])
         self.current_image = Image.open(initial_image_path)
         self.current_image = ImageTk.PhotoImage(self.current_image)
-        self.static_image_label = ctk.CTkLabel(master=video_frame, image=self.current_image)
+        self.static_image_label = ctk.CTkLabel(master=video_frame)
         self.static_image_label.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
+        self.static_image_label.configure(image=self.current_image)
 
         # Create a button to start the camera feed (replace this with your text)
         Button_feed_start = ctk.CTkButton(master=main_frame, text='ANTERIOR', height=40, width=250, border_width=0,
-                                           corner_radius=12, command=lambda: self.mostrarImagen(anterior=True))
+                           corner_radius=12, command=lambda: self.mostrarImagen(anterior=True))
         Button_feed_start.pack(side=ctk.TOP, pady=(5, 10))
         Button_feed_start = ctk.CTkButton(master=main_frame, text='SIGUIENTE', height=40, width=250, border_width=0,
-                                           corner_radius=12, command=lambda: self.mostrarImagen())
+                           corner_radius=12, command=lambda: self.mostrarImagen())
         Button_feed_start.pack(side=ctk.TOP, pady=(5, 10))
         Button_back_to_options = ctk.CTkButton(master=main_frame, text='Volver a Opciones', height=40, width=250,
                                            border_width=0, corner_radius=12, command=lambda: self.cerrar_ventana_aprendizaje(window))
