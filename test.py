@@ -22,8 +22,9 @@ Interfaz = interfaz.Interfaz
 
 
 class Test():
-    def __init__(self):
+    def __init__(self,callback):
         # Inicialización de variables y configuración inicial
+        self.callback = callback
         self.voz = AsistenteVoz()
         self.testLetter = None
         self.point = 0
@@ -39,53 +40,16 @@ class Test():
 
 
     def results(self): 
-        self.letter.configure(text="")
-        suma = 0
-        puntajes = []
-
-        resScreen = tk.Tk()
-
-        resScreen.title("Mi Interfaz")
-
-        #resScreen.resizable(False, False) 
-        screen_width = resScreen.winfo_screenwidth()
-        screen_height = resScreen.winfo_screenheight()
-        x = (screen_width/2) - (500/2)
-        y = (screen_height/2) - (300/2)
-        resScreen.geometry('%dx%d+%d+%d' % (500, 300, x, y))
-
-        label=tk.Label(resScreen, text="RESULTS", font="Aerial 15")  
-        label.grid(row=0, column=0)
-        label.grid_rowconfigure(0, weight=1)
-        label.grid_columnconfigure(0, weight=1)
-
-        i = 1
+        self.window.destroy()
+        self.window = ctk.CTk()
+        sum = 0
+        print("\n\nRESULTADOS OBTENIDOS:\n")
         for report in self.reports:
-            suma += report.result()
-            label=tk.Label(resScreen, text=report, font="Aerial 8")  
-            label.grid(row=i, column=0)
-            label.grid_rowconfigure(0, weight=1)
-            label.grid_columnconfigure(0, weight=1)
-            i = i + 1
-
-        #conclusion
-        conclusion = f"\n En general, el participante obtuvo un {suma/10}% de precisión."
-        label=tk.Label(resScreen, text=conclusion, font="Aerial 15")  
-        label.grid(row=11, column=0)
-        label.grid_rowconfigure(0, weight=1)
-        label.grid_columnconfigure(0, weight=1)
-
-        #botones
-        button=tk.Button(resScreen, text="Otro")  
-        button.grid(row=12, column=0)
-        button.grid_rowconfigure(0, weight=1)
-        button.grid_columnconfigure(0, weight=1)
-
-        button=tk.Button(resScreen, text="Return")  
-        button.grid(row=13, column=0)
-        button.grid_rowconfigure(0, weight=1)
-        button.grid_columnconfigure(0, weight=1)
-        resScreen.mainloop()  
+            sum += report.result()
+            print(report)
+        print(f"\nDado el test, el participante obtuvo un {sum/10}% de precisión.")
+        if self.callback:
+            self.callback()
 
 
     def start_test(self):
@@ -109,7 +73,7 @@ class Test():
             i += 1
             self.letter.configure(text=test[i])
             self.testLetter = test[i]
-            if i < 2:
+            if i < 10:
                 self.letter.after(10000, show_next_letter)
             else:
                 self.results()
@@ -161,7 +125,6 @@ class Test():
 
         return temp_landmark_list
 
-
     # Function to open the camera and perform hand gesture recognition
     def open_camera1(self):
         width, height = 800, 600
@@ -181,8 +144,6 @@ class Test():
 
                     hand_sign_id = self.keypoint_classifier(pre_processed_landmark_list)
 
-                    print(f"hand_sign_id: {hand_sign_id}")
-                    print(f"len(self.keypoint_classifier_labels): {len(self.keypoint_classifier_labels)}") 
                     
                     if (self.begin):
                         actualLetter = self.keypoint_classifier_labels[hand_sign_id]
@@ -293,16 +254,10 @@ class Test():
                                 font=("Consolas",24))
         Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
 
-        
-
         # Start the tkinter main loop
         self.window.mainloop()
 
     def main(self):
         self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
         self.window.after(20000, self.ejecutar())
-
-
-prueba = Test()
-prueba.main()
-
+             
