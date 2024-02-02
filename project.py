@@ -60,6 +60,12 @@ class VirtualAssistant:
                 print(text)
                 self.texto_a_audio(text)
 
+class VirtualAssistant:
+    def __init__(self):
+        self.asistente_voz = AsistenteVoz()
+        self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
+        self.mi_test = Test()
+        self.mi_camara = Camera()
 
     def saludar_usuario(self):
         print("\nSALUDO:")
