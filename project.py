@@ -4,6 +4,7 @@ from asistente import AsistenteVoz
 from camera_senias import Camera
 from aprendizaje import Aprendizaje
 from test import Test
+from juego_ia import Juego_senias
 
 class VirtualAssistant:
     def __init__(self):
@@ -11,7 +12,7 @@ class VirtualAssistant:
         self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
         self.mi_test = Test()
         self.mi_camara = Camera()
-
+        self.juego = Juego_senias()
     def texto_a_audio(self, comando):
         self.asistente_voz.texto_a_audio(comando)
 
@@ -48,7 +49,7 @@ class VirtualAssistant:
 
                 elif respuesta == "juego":
                     print("\n INICIALIZANDING...")
-                    self.mi_camara.ejecutar()
+                    self.juego.ejecutar()
                 break
 
             else:
