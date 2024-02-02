@@ -64,7 +64,6 @@ class Camera (AsistenteVoz):
 
         return temp_landmark_list
 
-
     # Function to open the camera and perform hand gesture recognition
     def open_camera1(self):
         width, height = 800, 600
