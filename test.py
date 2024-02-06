@@ -231,7 +231,7 @@ class Test():
         MyFrame3.pack(fill=ctk.X, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Crear un cuadro de texto para mostrar una oración
-        Sentence = ctk.CTkLabel(MyFrame3, font=("Consolas", 24))
+        Sentence = ctk.CTkTextbox(MyFrame3, font=("Consolas", 24))
         Sentence.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Iniciar el bucle principal de tkinter
