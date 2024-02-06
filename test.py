@@ -7,23 +7,20 @@ import mediapipe as mp
 from model import KeyPointClassifier
 import itertools
 import copy
-from datetime import datetime
-from asistente import AsistenteVoz
-
 import time
 import random
-from reporte import Reporte 
-import sys
+from reporte import Reporte
+from asistente import AsistenteVoz
 
 import_interfaz = "interfaz"
-interfaz = __import__(import_interfaz)  
+interfaz = __import__(import_interfaz)
 
 Interfaz = interfaz.Interfaz
 
 
 class Test():
-    def __init__(self,callback):
-        # Inicialización de variables y configuración inicial
+    # def __init__(self, callback=None):
+    def __init__(self, callback):
         self.callback = callback
         self.voz = AsistenteVoz()
         self.testLetter = None
@@ -36,25 +33,32 @@ class Test():
         self.letter = None
         self.reports = []
         self.begin = False
-        self.window = ctk.CTk()
 
-
-    def results(self): 
-        self.window.destroy()
-        self.window = ctk.CTk()
+    def results(self, Sentence):
         sum = 0
-        print("\n\nRESULTADOS OBTENIDOS:\n")
+        result_text = "\n\nRESULTADOS OBTENIDOS:\n"
         for report in self.reports:
             sum += report.result()
-            print(report)
-        print(f"\nDado el test, el participante obtuvo un {sum/10}% de precisión.")
-        if self.callback:
-            self.callback()
+            result_text += str(report) + "\n"
 
+        result_text += f"\nDado el test, el participante obtuvo un {sum/10}% de precisión."
 
-    def start_test(self):
+        # Limpiar el contenido actual del CTkTextbox
+        Sentence.delete(1.0, ctk.END)
+        # Mostrar los resultados en el CTkTextbox
+        Sentence.insert(ctk.END, result_text)
+
+        # Apagar la cámara y cerrar la ventana después de mostrar los resultados
+        if self.cap.isOpened():
+            self.cap.release()
+
+        if self.window:
+            self.window.destroy()
+            if self.callback:
+                self.callback()
+
+    def start_test(self, Sentence):
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
         test = []
 
         while (len(test) < 11):
@@ -76,7 +80,7 @@ class Test():
             if i < 10:
                 self.letter.after(10000, show_next_letter)
             else:
-                self.results()
+                self.results(Sentence)
 
         i = 0
         self.letter.configure(text=test[0])
@@ -160,104 +164,91 @@ class Test():
             self.video_lable.configure(image=my_image)
             self.video_lable.after(10, self.open_camera1)
 
-
-    def ejecutar(self):
-
-        # Load the KeyPointClassifier model
+    def mostrar_ventana_test(self):
+        # Cargar el modelo KeyPointClassifier
         self.keypoint_classifier = KeyPointClassifier()
 
-        # Read labels from a CSV file
+        # Leer etiquetas de un archivo CSV
         with open('model/keypoint_classifier/label.csv', encoding='utf-8-sig') as f:
             keypoint_classifier_labels_reader = csv.reader(f)
             self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]
-        # Set the appearance mode and color theme for the custom tkinter library
+
+        # Configuración de la apariencia de la interfaz gráfica
         ctk.set_appearance_mode("Dark")
         ctk.set_default_color_theme("blue")
 
-        # Create the main self.window
-        self.window.geometry('1080x1080')
-        self.window.title("HAND SIGNS")
-        
+        # Creación de la ventana principal
+        window = ctk.CTk()
+        window.geometry('1080x720')
+        window.title("APRENDIZAJE")
 
-        # Initialize the video capture
-        
+        # Inicializar la captura de video
         width, height = 600, 500
 
-        # Create the title label
-        i = 0
-        title = ctk.CTkFont(
-            family='Consolas',
-            weight='bold',
-            size=25
-        )
-        Label = ctk.CTkLabel(
-            self.window,
-            text = 'HAND SIGNS',
-            fg_color='steelblue',
-            text_color= 'white',
-            height= 40,
-            font=title,
-            corner_radius= 8)
-        Label.pack(side = ctk.TOP,fill=ctk.X,pady=(10,4),padx=(10,10))
+        # Crear la etiqueta del título
+        title = ctk.CTkFont(family='Consolas', weight='bold', size=25)
+        Label = ctk.CTkLabel(window, text='HAND SIGNS', fg_color='steelblue', text_color='white',
+                             height=40, font=title, corner_radius=8)
+        Label.pack(side=ctk.TOP, fill=ctk.X, pady=(10, 4), padx=(10, 10))
 
-        # Create the main frame
-        main_frame = ctk.CTkFrame(master=self.window,
-                                height=770,
-                                corner_radius=8
-                                )
+        # Crear el marco principal
+        main_frame = ctk.CTkFrame(master=window, height=770, corner_radius=8)
+        main_frame.pack(fill=ctk.X, padx=(10, 10), pady=(5, 0))
 
-        main_frame.pack(fill = ctk.X , padx=(10,10),pady=(5,0))
-        MyFrame1=ctk.CTkFrame(master=main_frame,
-                            height = 375,
-                            width=365
-                            )
-        MyFrame1.pack(fill = ctk.BOTH,expand=ctk.TRUE,side = ctk.LEFT,padx = (10,10),pady=(10,10))
+        MyFrame1 = ctk.CTkFrame(master=main_frame, height=375, width=365)
+        MyFrame1.pack(fill=ctk.BOTH, expand=ctk.TRUE, side=ctk.LEFT, padx=(10, 10), pady=(10, 10))
 
-        # Create the video frame
-        video_frame = ctk.CTkFrame(master=MyFrame1,height=340,width=365,corner_radius=12)
-        video_frame.pack(side=ctk.TOP,fill=ctk.BOTH,expand = ctk.TRUE ,padx=(10,10),pady=(10,5))
+        # Crear el marco de video
+        video_frame = ctk.CTkFrame(master=MyFrame1, height=340, width=365, corner_radius=12)
+        video_frame.pack(side=ctk.TOP, fill=ctk.BOTH, expand=ctk.TRUE, padx=(10, 10), pady=(10, 5))
 
-        # Create the video label
+        # Crear la etiqueta de video
         self.video_lable = ctk.CTkLabel(master=video_frame, text='', height=340, width=365, corner_radius=12)
         self.video_lable.pack(fill=ctk.BOTH, padx=(0, 0), pady=(0, 0))
 
+        # Crear un botón para volver a las opciones
+        Button_back_to_options = ctk.CTkButton(master=MyFrame1, text='Volver a Opciones', height=40, width=250,
+                                               border_width=0, corner_radius=12,
+                                               command=lambda: self.cerrar_ventana_test(window))
+        Button_back_to_options.pack(side=ctk.LEFT, padx=(5, 5))
 
-        # Create a button to start the camera feed
-        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='Iniciar un Test', height=40, width=250, border_width=0, corner_radius=12, command=lambda: self.start_test())
+        # Crear un botón para iniciar el test
+        Camera_feed_start = ctk.CTkButton(master=MyFrame1, text='Iniciar un Test', height=40, width=250, border_width=0,
+                                          corner_radius=12, command=lambda: self.start_test(Sentence))
         Camera_feed_start.pack(side=ctk.TOP, pady=(5, 10))
         self.open_camera1()
 
-        MyFrame2=ctk.CTkFrame(master=main_frame,
-                            height=375
-                            ) 
-        MyFrame2.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        MyFrame2 = ctk.CTkFrame(master=main_frame, height=375)
+        MyFrame2.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
-        # Create a font for displaying letters
-        myfont = ctk.CTkFont(
-            family='Consolas',
-            weight='bold',
-            size=200
-        )
-        self.letter = ctk.CTkLabel(MyFrame2,
-                                font=myfont,fg_color='#2B2B2B',justify=ctk.CENTER)
-        self.letter.pack(fill = ctk.BOTH,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        # Crear una fuente para mostrar letras
+        myfont = ctk.CTkFont(family='Consolas', weight='bold', size=200)
+        self.letter = ctk.CTkLabel(MyFrame2, font=myfont, fg_color='#2B2B2B', justify=ctk.CENTER)
+        self.letter.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
         self.letter.configure(text='')
 
-        MyFrame3=ctk.CTkFrame(master=self.window,
-                            height=175,
-                            corner_radius=12
-                            )
-        MyFrame3.pack(fill = ctk.X,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        MyFrame3 = ctk.CTkFrame(master=window, height=175, corner_radius=12)
+        MyFrame3.pack(fill=ctk.X, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
-        # Create a textbox for displaying a sentence
-        Sentence = ctk.CTkTextbox(MyFrame3,
-                                font=("Consolas",24))
-        Sentence.pack(fill = ctk.X,side=ctk.LEFT,expand = ctk.TRUE,padx = (10,10),pady=(10,10))
+        # Crear un cuadro de texto para mostrar una oración
+        Sentence = ctk.CTkLabel(MyFrame3, font=("Consolas", 24))
+        Sentence.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
-        # Start the tkinter main loop
-        self.window.mainloop()
+        # Iniciar el bucle principal de tkinter
+        window.mainloop()
+    
+    def cerrar_ventana_test(self, window):
+        window.destroy()
+        if self.callback:
+            self.callback()
 
-    def main(self):
-        self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
-        self.window.after(20000, self.ejecutar())
-             
+    def ejecutar(self):
+        # self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
+        self.mostrar_ventana_test()
+
+"""
+# Para ejecutar test.py sin necesidad de usar project.py
+prueba = Test()
+prueba.ejecutar()
+# saca de comentarios esto en init -> # def __init__(self, callback=None):
+"""
