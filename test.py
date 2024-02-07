@@ -192,21 +192,21 @@ class Test():
         ctk.set_default_color_theme("blue")
 
         # Creación de la ventana principal
-        window = ctk.CTk()
-        window.geometry('1080x720')
-        window.title("APRENDIZAJE")
+        self.window = ctk.CTk()
+        self.window.geometry('1080x720')
+        self.window.title("APRENDIZAJE")
 
         # Inicializar la captura de video
         width, height = 600, 500
 
         # Crear la etiqueta del título
         title = ctk.CTkFont(family='Consolas', weight='bold', size=25)
-        Label = ctk.CTkLabel(window, text='HAND SIGNS', fg_color='steelblue', text_color='white',
+        Label = ctk.CTkLabel(self.window, text='HAND SIGNS', fg_color='steelblue', text_color='white',
                              height=40, font=title, corner_radius=8)
         Label.pack(side=ctk.TOP, fill=ctk.X, pady=(10, 4), padx=(10, 10))
 
         # Crear el marco principal
-        main_frame = ctk.CTkFrame(master=window, height=770, corner_radius=8)
+        main_frame = ctk.CTkFrame(master=self.window, height=770, corner_radius=8)
         main_frame.pack(fill=ctk.X, padx=(10, 10), pady=(5, 0))
 
         MyFrame1 = ctk.CTkFrame(master=main_frame, height=375, width=365)
@@ -223,7 +223,7 @@ class Test():
         # Crear un botón para volver a las opciones
         Button_back_to_options = ctk.CTkButton(master=MyFrame1, text='Volver a Opciones', height=40, width=250,
                                                border_width=0, corner_radius=12,
-                                               command=lambda: self.cerrar_ventana_test(window))
+                                               command=lambda: self.cerrar_ventana_test(self.window))
         Button_back_to_options.pack(side=ctk.LEFT, padx=(5, 5))
 
         # Crear un botón para iniciar el test
@@ -241,7 +241,7 @@ class Test():
         self.letter.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
         self.letter.configure(text='')
 
-        MyFrame3 = ctk.CTkFrame(master=window, height=175, corner_radius=12)
+        MyFrame3 = ctk.CTkFrame(master=self.window, height=175, corner_radius=12)
         MyFrame3.pack(fill=ctk.X, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Crear un cuadro de texto para mostrar una oración
@@ -249,10 +249,16 @@ class Test():
         Sentence.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Iniciar el bucle principal de tkinter
-        window.mainloop()
+        self.window.mainloop()
+        
+        #cerrar cámara
+        if self.window:
+            if self.callback:
+                self.cap.release()
+                self.callback()
     
-    def cerrar_ventana_test(self, window):
-        window.destroy()
+    def cerrar_ventana_test(self):
+        self.window.destroy()
             
         if self.callback:
             self.cap.release()

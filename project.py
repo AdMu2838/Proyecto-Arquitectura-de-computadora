@@ -37,7 +37,8 @@ class VirtualAssistant:
     def presentar_opciones(self):
 
         self.win_choose = ctk.CTk()
-        
+        self.win_choose.geometry("600x75")
+
         text = (
             "\n 1) Aprendizaje"
             "\n 2) Test"
@@ -52,18 +53,21 @@ class VirtualAssistant:
         self.texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
         print("dime")
         self.texto_a_audio("dime")
+
+        title = ctk.CTkLabel(self.win_choose, text = "Escoja su modo")
+        title.pack(side=ctk.LEFT, padx=(20, 20))
     
         learn = ctk.CTkButton(self.win_choose, text = 'Aprendizaje', command=self.do_learn)
-        learn.pack()
+        learn.pack(side=ctk.LEFT, padx=(5, 5))
     
         prueba = ctk.CTkButton(self.win_choose, text = 'Test', command=self.do_test)
-        prueba.pack()
+        prueba.pack(side=ctk.LEFT, padx=(5, 5))
     
         juego = ctk.CTkButton(self.win_choose, text = 'Juego', command=self.do_game)
-        juego.pack()
+        juego.pack(side=ctk.LEFT, padx=(5, 5))
 
         self.option_label = ctk.CTkLabel(self.win_choose, text = "")
-        self.option_label.pack()
+        self.option_label.pack(side=ctk.LEFT, padx=(5, 5))
         
         self.win_choose.mainloop()
 
@@ -113,9 +117,10 @@ class VirtualAssistant:
         self.texto_a_audio(text)
 
     def ejecutar_programa(self):
-        #nombre = self.saludar_usuario()
-        #self.introduccion()
-        #self.opciones(nombre)
+
+        nombre = self.saludar_usuario()
+        self.introduccion()
+        self.opciones(nombre)
         self.presentar_opciones()
 
         
