@@ -16,7 +16,7 @@ import copy
 
 class Juego_senias(AsistenteVoz):
 
-    def __init__(self):
+    def __init__(self, callback):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
 
@@ -57,7 +57,8 @@ class Juego_senias(AsistenteVoz):
         # Botones
         self.frame_botones, self.BotonEnviarTexto, self.BotonSalir, self.BotonNuevoJuego = None, None, None, None
 
-
+        # Salir a las opciones
+        self.callback = callback
 
     def ejecutar(self):
         # Load the KeyPointClassifier model
@@ -356,7 +357,7 @@ class Juego_senias(AsistenteVoz):
         self.BotonNuevoJuego.grid(row=0, column=1, sticky="ew", padx = 120)
         self.BotonNuevoJuego.configure(font=font_title, fg_color='steelblue', text_color= 'white', corner_radius= 8)
 
-        self.BotonSalir=ct.CTkButton(self.frame_botones, text="SALIR", width=120, command = exit)
+        self.BotonSalir=ct.CTkButton(self.frame_botones, text="SALIR", width=120, command =lambda: self.cerrar_ventana(self.app))
         self.BotonSalir.grid(row=0, column=2, sticky="ew", padx = 25)
         self.BotonSalir.configure(font=font_title, fg_color='steelblue', text_color= 'white', corner_radius= 8)
         
@@ -423,9 +424,13 @@ class Juego_senias(AsistenteVoz):
                 self.Lienzo.create_line(100,135, 70,165, width=3,fill="white")#pierna1
                 self.Lienzo.create_line(100,135, 130,165, width=3,fill="white")#pierna2
 
+    def cerrar_ventana(self, window):
+        window.destroy()
+        if self.callback:
+            self.callback()
 
 
 if __name__ == "__main__":
-    prueba = Juego_senias()
+    prueba = Juego_senias(callback=None)
     prueba.ejecutar()
         

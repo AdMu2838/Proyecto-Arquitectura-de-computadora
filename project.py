@@ -9,7 +9,7 @@ class VirtualAssistant:
         self.asistente_voz = AsistenteVoz()
         self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
         self.mi_test = Test(callback=self.presentar_opciones)
-        
+        self.mi_juego = Juego_senias(callback=self.presentar_opciones)
         
         
     def texto_a_audio(self, comando):
@@ -54,8 +54,8 @@ class VirtualAssistant:
                     self.mi_test.ejecutar()
 
                 elif respuesta == "juego":
-                    print("\n INICIALIZANDING...")
-                    Juego_senias().ejecutar()
+                    print("\n INICIALIZANDO...")
+                    self.mi_juego.ejecutar()
                 break
 
             else:
