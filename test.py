@@ -49,13 +49,6 @@ class Test():
         Sentence.insert(ctk.END, result_text)
 
         # Apagar la cámara y cerrar la ventana después de mostrar los resultados
-        if self.cap.isOpened():
-            self.cap.release()
-
-        if self.window:
-            self.window.destroy()
-            if self.callback:
-                self.callback()
 
     def start_test(self, Sentence):
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -237,13 +230,14 @@ class Test():
         # Iniciar el bucle principal de tkinter
         window.mainloop()
     
-    def cerrar_ventana_test(self, window):
+    def cerrar_ventana_test(self, window, irse):
         window.destroy()
-        if self.callback:
+            
+        if irse & self.callback:
             self.callback()
 
     def ejecutar(self):
-        # self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
+        self.voz.texto_a_audio("Se probarán tus conocimientos hasta ahora. Se te mostará una letra aleatoria y deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
         self.mostrar_ventana_test()
 
 """

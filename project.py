@@ -1,16 +1,17 @@
-
 import time
 from asistente import AsistenteVoz
 from aprendizaje import Aprendizaje
 from test import Test
 from juego_ia import Juego_senias
+import customtkinter as ctk
+
 class VirtualAssistant:
     def __init__(self):
         self.asistente_voz = AsistenteVoz()
         self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
         self.mi_test = Test(callback=self.presentar_opciones)
-        
-        
+        self.option_label = None
+        self.win_choose = None
         
     def texto_a_audio(self, comando):
         self.asistente_voz.texto_a_audio(comando)
@@ -21,7 +22,22 @@ class VirtualAssistant:
     def enviar_voz(self):
         return self.asistente_voz.enviar_voz()
 
+    def do_learn(self):
+        self.option_label.configure(text="Escogiste Aprendizaje")
+        self.win_choose.destroy()
+
+    def do_test(self):
+        self.option_label.configure(text="Escogiste Test")
+        self.win_choose.destroy()
+
+    def do_game(self):
+        self.option_label.configure(text="Escogiste Juego")
+        self.win_choose.destroy()
+    
     def presentar_opciones(self):
+
+        self.win_choose = ctk.CTk()
+        
         text = (
             "\n 1) Aprendizaje"
             "\n 2) Test"
@@ -36,36 +52,27 @@ class VirtualAssistant:
         self.texto_a_audio("¿Aprendizaje? ¿Tests? ¿Juegos?")
         print("dime")
         self.texto_a_audio("dime")
+    
+        learn = ctk.CTkButton(self.win_choose, text = 'Aprendizaje', command=self.do_learn)
+        learn.pack()
+    
+        prueba = ctk.CTkButton(self.win_choose, text = 'Test', command=self.do_test)
+        prueba.pack()
+    
+        juego = ctk.CTkButton(self.win_choose, text = 'Juego', command=self.do_game)
+        juego.pack()
+
+        self.option_label = ctk.CTkLabel(self.win_choose, text = "")
+        self.option_label.pack()
         
-        while True:
-            respuesta = self.enviar_voz()
-            print("Tu respuesta " + respuesta)
+        self.win_choose.mainloop()
 
-            text = f"\nElegiste la opción de {respuesta}"
-
-            if respuesta in ["aprendizaje", "prueba", "juego"]:
-                print(text)
-                self.texto_a_audio(text)
-
-                if respuesta == "aprendizaje":
-                    self.mi_aprendizaje.ejecutar()
-
-                elif respuesta == "prueba":
-                    self.mi_test.ejecutar()
-
-                elif respuesta == "juego":
-                    print("\n INICIALIZANDING...")
-                    Juego_senias().ejecutar()
-                break
-
-            else:
-                text = (
-                    f"Creo que no has respondido con alguna de las instrucciones indicadas anteriormente."
-                    "\nResponde con una de las alternativas mencionadas."
-                )
-                print(text)
-                self.texto_a_audio(text)
-
+        if (self.option_label.cget("text") == "Escogiste Aprendizaje"):
+            self.mi_aprendizaje.ejecutar()      
+        elif (self.option_label.cget("text") == "Escogiste Test"):
+            self.mi_test.ejecutar()      
+        elif (self.option_label.cget("text") == "Escogiste Juego"):
+            Juego_senias.ejecutar()      
 
     def saludar_usuario(self):
         print("\nSALUDO:")
@@ -106,9 +113,9 @@ class VirtualAssistant:
         self.texto_a_audio(text)
 
     def ejecutar_programa(self):
-        nombre = self.saludar_usuario()
-        self.introduccion()
-        self.opciones(nombre)
+        #nombre = self.saludar_usuario()
+        #self.introduccion()
+        #self.opciones(nombre)
         self.presentar_opciones()
 
         
