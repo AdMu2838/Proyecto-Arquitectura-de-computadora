@@ -12,14 +12,7 @@ import random
 from reporte import Reporte
 from asistente import AsistenteVoz
 
-import_interfaz = "interfaz"
-interfaz = __import__(import_interfaz)
-
-Interfaz = interfaz.Interfaz
-
-
 class Test():
-    # def __init__(self, callback=None):
     def __init__(self, callback):
         self.callback = callback
         self.voz = AsistenteVoz()
@@ -31,8 +24,9 @@ class Test():
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
-        self.reports = []
+        self.reports = None
         self.begin = False
+        self.window = None
 
     def results(self, Sentence):
         sum = 0
@@ -44,13 +38,40 @@ class Test():
         result_text += f"\nDado el test, el participante obtuvo un {sum/10}% de precisión."
 
         # Limpiar el contenido actual del CTkTextbox
-        Sentence.delete(1.0, ctk.END)
+        Sentence.delete("0.0", "end")
         # Mostrar los resultados en el CTkTextbox
-        Sentence.insert(ctk.END, result_text)
+        Sentence.insert("0.0", result_text)
+        
+        self.letter.configure(text = '')
 
-        # Apagar la cámara y cerrar la ventana después de mostrar los resultados
+        if self.window:
+            self.window.destroy()
+            if self.callback:
+                self.cap.release()
+                self.callback()
 
     def start_test(self, Sentence):
+
+        self.voz.texto_a_audio("Empieza en...")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("5")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("4")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("3")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("2")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("1")
+        time.sleep(1)
+
+        self.reports = []
+
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         test = []
 
@@ -70,7 +91,7 @@ class Test():
             i += 1
             self.letter.configure(text=test[i])
             self.testLetter = test[i]
-            if i < 10:
+            if i < 2:
                 self.letter.after(10000, show_next_letter)
             else:
                 self.results(Sentence)
@@ -230,19 +251,14 @@ class Test():
         # Iniciar el bucle principal de tkinter
         window.mainloop()
     
-    def cerrar_ventana_test(self, window, irse):
+    def cerrar_ventana_test(self, window):
         window.destroy()
             
-        if irse & self.callback:
+        if self.callback:
+            self.cap.release()
             self.callback()
 
     def ejecutar(self):
         self.voz.texto_a_audio("Se probarán tus conocimientos hasta ahora. Se te mostará una letra aleatoria y deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
         self.mostrar_ventana_test()
 
-"""
-# Para ejecutar test.py sin necesidad de usar project.py
-prueba = Test()
-prueba.ejecutar()
-# saca de comentarios esto en init -> # def __init__(self, callback=None):
-"""
