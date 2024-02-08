@@ -106,9 +106,9 @@ class VirtualAssistant:
         self.texto_a_audio(text)
 
     def ejecutar_programa(self):
-        nombre = self.saludar_usuario()
-        self.introduccion()
-        self.opciones(nombre)
+        #nombre = self.saludar_usuario()
+        #self.introduccion()
+        #self.opciones(nombre)
         self.presentar_opciones()
 
         

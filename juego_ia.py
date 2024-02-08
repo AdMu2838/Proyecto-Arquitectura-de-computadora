@@ -20,12 +20,6 @@ class Juego_senias(AsistenteVoz):
         # Llama al constructor de la clase base (AsistenteVoz)
         super().__init__()
 
-        # INTERFAZ
-        self.app = ct.CTk()
-        self.app.geometry("1200x690")
-        self.app.title("Juego del ahorcado")
-        self.app.resizable(False, False)
-
         # Juego
         self.EstamosJugando = False
         self.estado_voz = True
@@ -62,6 +56,7 @@ class Juego_senias(AsistenteVoz):
 
     def ejecutar(self):
         # Load the KeyPointClassifier model
+
         self.keypoint_classifier = KeyPointClassifier()
 
         # Read labels from a CSV file
@@ -69,18 +64,24 @@ class Juego_senias(AsistenteVoz):
             keypoint_classifier_labels_reader = csv.reader(f)
             self.keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels_reader]
 
-        self.entrada_teclado()
-        self.titulo()
-        self.camara()
+        # INTERFAZ
+        app = ct.CTk()
+        app.geometry("1200x690")
+        app.title("Juego del ahorcado")
+        app.resizable(False, False)
+
+        self.entrada_teclado(app)
+        self.titulo(app)
+        self.camara(app)
         #self.imagen()
-        self.munieco()
-        self.palabra()
-        self.botones()
+        self.munieco(app)
+        self.palabra(app)
+        self.botones(app)
         self.JuegoNuevo()
 
         #self.iniciar_hilo_voz()
 
-        self.app.mainloop()
+        app.mainloop()
 
         self.estado_voz = False
 
@@ -125,13 +126,13 @@ class Juego_senias(AsistenteVoz):
 
     #TODO LO RELACIONADO CON LA ENTRADA DEL TECLADO
         
-    def entrada_teclado(self):
-        self.app.bind("<Return>",lambda x: self.BotonEnviar())
-        self.app.bind("<Control_R>",lambda x: self.JuegoNuevo())
-        self.app.bind("<Control_L>",lambda x: self.JuegoNuevo())
-        self.app.bind("<Escape>",lambda x: exit())
-        # Asociar la función update_text con el evento de presionar tecla
-        self.app.bind("<Key>", self.update_text)
+    def entrada_teclado(self,app):
+            app.bind("<Return>",lambda x: self.BotonEnviar())
+            app.bind("<Control_R>",lambda x: self.JuegoNuevo())
+            app.bind("<Control_L>",lambda x: self.JuegoNuevo())
+            app.bind("<Escape>",lambda x: exit())
+            # Asociar la función update_text con el evento de presionar tecla
+            app.bind("<Key>", self.update_text)
 
     def update_text(self, event):
         # Obtener la tecla presionada
@@ -180,9 +181,6 @@ class Juego_senias(AsistenteVoz):
                 self.Texto2.set("La palabra era "+self.ObjetoJuego.getPalabra())
         self.__Dibujo()
 
-    def salir(self):
-        self.exit() 
-    
 
     
     # TODO LO RELACIONADO CON LA CAMARA
@@ -273,9 +271,9 @@ class Juego_senias(AsistenteVoz):
 
     # TODO LO RELACIONADO CON LA INTERFAZ
 
-    def titulo(self):
+    def titulo(self, app):
         font_title = ct.CTkFont(family='Consolas', weight='bold', size=25)
-        title = ct.CTkLabel(self.app,
+        title = ct.CTkLabel(app,
                             text = 'JUEGO SEÑAS',
                             fg_color='steelblue',
                             text_color= 'white',
@@ -284,8 +282,8 @@ class Juego_senias(AsistenteVoz):
                             corner_radius= 8)
         title.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(5,4), padx=(7,10))
 
-    def camara(self):
-        self.frame_camara = ct.CTkFrame(master=self.app)   #, width=680, height = 400
+    def camara(self,app):
+        self.frame_camara = ct.CTkFrame(master=app)   #, width=680, height = 400
         self.frame_camara.grid(row=1, column=0, columnspan=2, padx = (14,5), pady=(3,0))
 
         # Create the video frame
@@ -308,8 +306,8 @@ class Juego_senias(AsistenteVoz):
         self.frame_imagen=ct.CTkFrame(master=self.app, width=750, height=400, fg_color="green") 
         self.frame_imagen.grid(row=1, column=1, padx = (10,10),pady=(10,10))"""
 
-    def munieco(self):
-        self.frame_munieco=ct.CTkFrame(master=self.app, width=600, height=210, fg_color="transparent") 
+    def munieco(self,app):
+        self.frame_munieco=ct.CTkFrame(master=app, width=600, height=210, fg_color="transparent")
         self.frame_munieco.grid(row=2, column=0, padx = (12,5),pady=(5,3))
 
         self.Lienzo=ct.CTkCanvas(self.frame_munieco, width=200, height=200, bg="dark green")
@@ -324,8 +322,8 @@ class Juego_senias(AsistenteVoz):
         )
         self.EntradaTexto.configure(fg_color="black", font=myfont, text='')
 
-    def palabra(self):
-        self.frame_palabra=ct.CTkFrame(master=self.app, width=750, height=210, fg_color="transparent") 
+    def palabra(self,app):
+        self.frame_palabra=ct.CTkFrame(master=app, width=750, height=210, fg_color="transparent")
         self.frame_palabra.grid(row=2, column=1, padx = (20,10),pady=(10,10))
 
         #Palabra
@@ -343,8 +341,8 @@ class Juego_senias(AsistenteVoz):
         self.Etiqueta2.pack(side=ct.BOTTOM, padx = (12,5), pady=(15,5))
         self.Etiqueta2.configure(fg_color="transparent" ,font=("Verdana",30))
 
-    def botones(self):
-        self.frame_botones = ct.CTkFrame(master=self.app, height=50, fg_color="transparent") 
+    def botones(self,app):
+        self.frame_botones = ct.CTkFrame(master=app, height=50, fg_color="transparent")
         self.frame_botones.grid(row=3, column=0, columnspan=2, pady=(4,4), padx=(10,10))
 
         font_title = ct.CTkFont(family='Consolas', weight='bold', size=24)
@@ -357,7 +355,7 @@ class Juego_senias(AsistenteVoz):
         self.BotonNuevoJuego.grid(row=0, column=1, sticky="ew", padx = 120)
         self.BotonNuevoJuego.configure(font=font_title, fg_color='steelblue', text_color= 'white', corner_radius= 8)
 
-        self.BotonSalir=ct.CTkButton(self.frame_botones, text="SALIR", width=120, command =lambda: self.cerrar_ventana(self.app))
+        self.BotonSalir=ct.CTkButton(self.frame_botones, text="SALIR", width=120, command =lambda: self.cerrar_ventana(app))
         self.BotonSalir.grid(row=0, column=2, sticky="ew", padx = 25)
         self.BotonSalir.configure(font=font_title, fg_color='steelblue', text_color= 'white', corner_radius= 8)
         
@@ -424,10 +422,18 @@ class Juego_senias(AsistenteVoz):
                 self.Lienzo.create_line(100,135, 70,165, width=3,fill="white")#pierna1
                 self.Lienzo.create_line(100,135, 130,165, width=3,fill="white")#pierna2
 
-    def cerrar_ventana(self, window):
-        window.destroy()
+    def cerrar_ventana(self, app):
+        self.desvincular_eventos(app)
+        app.destroy()
         if self.callback:
             self.callback()
+
+    def desvincular_eventos(self, app):
+        app.unbind("<Return>")
+        app.unbind("<Control_R>")
+        app.unbind("<Control_L>")
+        app.unbind("<Escape>")
+        app.unbind("<Key>")
 
 
 if __name__ == "__main__":
