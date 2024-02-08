@@ -10,6 +10,7 @@ class VirtualAssistant:
         self.asistente_voz = AsistenteVoz()
         self.mi_aprendizaje = Aprendizaje(callback=self.presentar_opciones)
         self.mi_test = Test(callback=self.presentar_opciones)
+        self.mi_juego = Juego_senias(callback=self.presentar_opciones)
         self.option_label = None
         self.win_choose = None
         
@@ -76,7 +77,7 @@ class VirtualAssistant:
         elif (self.option_label.cget("text") == "Escogiste Test"):
             self.mi_test.ejecutar()      
         elif (self.option_label.cget("text") == "Escogiste Juego"):
-            Juego_senias.ejecutar()      
+            self.mi_juego.ejecutar()
 
     def saludar_usuario(self):
         print("\nSALUDO:")
@@ -118,9 +119,9 @@ class VirtualAssistant:
 
     def ejecutar_programa(self):
 
-        nombre = self.saludar_usuario()
-        self.introduccion()
-        self.opciones(nombre)
+        #nombre = self.saludar_usuario()
+        #self.introduccion()
+        #self.opciones(nombre)
         self.presentar_opciones()
 
         
