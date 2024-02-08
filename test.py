@@ -44,12 +44,6 @@ class Test():
         
         self.letter.configure(text = '')
 
-        if self.window:
-            self.window.destroy()
-            if self.callback:
-                self.cap.release()
-                self.callback()
-
     def start_test(self, Sentence):
 
         self.voz.texto_a_audio("Empieza en...")
@@ -91,7 +85,7 @@ class Test():
             i += 1
             self.letter.configure(text=test[i])
             self.testLetter = test[i]
-            if i < 2:
+            if i < 10:
                 self.letter.after(10000, show_next_letter)
             else:
                 self.results(Sentence)
@@ -223,7 +217,7 @@ class Test():
         # Crear un botón para volver a las opciones
         Button_back_to_options = ctk.CTkButton(master=MyFrame1, text='Volver a Opciones', height=40, width=250,
                                                border_width=0, corner_radius=12,
-                                               command=lambda: self.cerrar_ventana_test(self.window))
+                                               command=lambda: self.cerrar_ventana_test())
         Button_back_to_options.pack(side=ctk.LEFT, padx=(5, 5))
 
         # Crear un botón para iniciar el test
@@ -262,6 +256,7 @@ class Test():
             
         if self.callback:
             self.cap.release()
+            self.cap = cv2.VideoCapture(0)
             self.callback()
 
     def ejecutar(self):
