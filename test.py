@@ -12,14 +12,7 @@ import random
 from reporte import Reporte
 from asistente import AsistenteVoz
 
-import_interfaz = "interfaz"
-interfaz = __import__(import_interfaz)
-
-Interfaz = interfaz.Interfaz
-
-
 class Test():
-    # def __init__(self, callback=None):
     def __init__(self, callback):
         self.callback = callback
         self.voz = AsistenteVoz()
@@ -31,8 +24,9 @@ class Test():
         self.cap = cv2.VideoCapture(0)
         self.keypoint_classifier_labels = []
         self.letter = None
-        self.reports = []
+        self.reports = None
         self.begin = False
+        self.window = None
 
     def results(self, Sentence):
         sum = 0
@@ -44,20 +38,40 @@ class Test():
         result_text += f"\nDado el test, el participante obtuvo un {sum/10}% de precisión."
 
         # Limpiar el contenido actual del CTkTextbox
-        Sentence.delete(1.0, ctk.END)
+        Sentence.delete("0.0", "end")
         # Mostrar los resultados en el CTkTextbox
-        Sentence.insert(ctk.END, result_text)
-
-        # Apagar la cámara y cerrar la ventana después de mostrar los resultados
-        if self.cap.isOpened():
-            self.cap.release()
+        Sentence.insert("0.0", result_text)
+        
+        self.letter.configure(text = '')
 
         if self.window:
             self.window.destroy()
             if self.callback:
+                self.cap.release()
                 self.callback()
 
     def start_test(self, Sentence):
+
+        self.voz.texto_a_audio("Empieza en...")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("5")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("4")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("3")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("2")
+        time.sleep(1)
+
+        self.voz.texto_a_audio("1")
+        time.sleep(1)
+
+        self.reports = []
+
         abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         test = []
 
@@ -77,7 +91,7 @@ class Test():
             i += 1
             self.letter.configure(text=test[i])
             self.testLetter = test[i]
-            if i < 10:
+            if i < 2:
                 self.letter.after(10000, show_next_letter)
             else:
                 self.results(Sentence)
@@ -178,21 +192,21 @@ class Test():
         ctk.set_default_color_theme("blue")
 
         # Creación de la ventana principal
-        window = ctk.CTk()
-        window.geometry('1080x720')
-        window.title("APRENDIZAJE")
+        self.window = ctk.CTk()
+        self.window.geometry('1080x720')
+        self.window.title("APRENDIZAJE")
 
         # Inicializar la captura de video
         width, height = 600, 500
 
         # Crear la etiqueta del título
         title = ctk.CTkFont(family='Consolas', weight='bold', size=25)
-        Label = ctk.CTkLabel(window, text='HAND SIGNS', fg_color='steelblue', text_color='white',
+        Label = ctk.CTkLabel(self.window, text='HAND SIGNS', fg_color='steelblue', text_color='white',
                              height=40, font=title, corner_radius=8)
         Label.pack(side=ctk.TOP, fill=ctk.X, pady=(10, 4), padx=(10, 10))
 
         # Crear el marco principal
-        main_frame = ctk.CTkFrame(master=window, height=770, corner_radius=8)
+        main_frame = ctk.CTkFrame(master=self.window, height=770, corner_radius=8)
         main_frame.pack(fill=ctk.X, padx=(10, 10), pady=(5, 0))
 
         MyFrame1 = ctk.CTkFrame(master=main_frame, height=375, width=365)
@@ -209,7 +223,7 @@ class Test():
         # Crear un botón para volver a las opciones
         Button_back_to_options = ctk.CTkButton(master=MyFrame1, text='Volver a Opciones', height=40, width=250,
                                                border_width=0, corner_radius=12,
-                                               command=lambda: self.cerrar_ventana_test(window))
+                                               command=lambda: self.cerrar_ventana_test(self.window))
         Button_back_to_options.pack(side=ctk.LEFT, padx=(5, 5))
 
         # Crear un botón para iniciar el test
@@ -227,7 +241,7 @@ class Test():
         self.letter.pack(fill=ctk.BOTH, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
         self.letter.configure(text='')
 
-        MyFrame3 = ctk.CTkFrame(master=window, height=175, corner_radius=12)
+        MyFrame3 = ctk.CTkFrame(master=self.window, height=175, corner_radius=12)
         MyFrame3.pack(fill=ctk.X, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Crear un cuadro de texto para mostrar una oración
@@ -235,20 +249,22 @@ class Test():
         Sentence.pack(fill=ctk.X, side=ctk.LEFT, expand=ctk.TRUE, padx=(10, 10), pady=(10, 10))
 
         # Iniciar el bucle principal de tkinter
-        window.mainloop()
+        self.window.mainloop()
+        
+        #cerrar cámara
+        if self.window:
+            if self.callback:
+                self.cap.release()
+                self.callback()
     
-    def cerrar_ventana_test(self, window):
-        window.destroy()
+    def cerrar_ventana_test(self):
+        self.window.destroy()
+            
         if self.callback:
+            self.cap.release()
             self.callback()
 
     def ejecutar(self):
-        # self.voz.texto_a_audio("El test consiste en probar tus conocimientos en el lenguaje de señas. Este consiste en que se te mostará una letra aleatoria y tú deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
+        self.voz.texto_a_audio("Se probarán tus conocimientos hasta ahora. Se te mostará una letra aleatoria y deberás hacer el gesto correspondiente. Son un total de 10 letras, cada una con evaluación de 10 segundos, al final se te mostrará tu precisión.")
         self.mostrar_ventana_test()
 
-"""
-# Para ejecutar test.py sin necesidad de usar project.py
-prueba = Test()
-prueba.ejecutar()
-# saca de comentarios esto en init -> # def __init__(self, callback=None):
-"""
